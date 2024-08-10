@@ -10,21 +10,20 @@ app.register_blueprint(app_views)
 
 
 @app.errorhandler(404)
-def not_found():
+def not_found(_):
     """404 page loader"""
     not_found = {"Error": "Page not found! Please check the URL"}
     return jsonify(not_found), 404
 
 
 @app.errorhandler(500)
-def server_error():
+def server_error(_):
     """
     Server error page loader.
     Only for devolopers.
     """
     error_message = {"Error": "Server incountered an error. Pleses check logs"}
     return jsonify(error_message), 500
-    
 
 
 if __name__ == "__main__":
