@@ -24,13 +24,7 @@ def server_error():
     """
     error_message = {"Error": "Server incountered an error. Pleses check logs"}
     return jsonify(error_message), 500
-
-
-@app.route("/status", methods=["GET"], strict_slashes=False)
-def api_status():
-    """Checks if server is running"""
-    good_state = {"Status": "API running!"}
-    return jsonify(good_state), 200
+    
 
 
 if __name__ == "__main__":
