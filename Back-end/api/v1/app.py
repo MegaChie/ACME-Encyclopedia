@@ -1,12 +1,20 @@
 #!/usr/bin/python3
 """Contains the https code messages handlers"""
 from flask import Flask, jsonify, request
+from flask_mongoengine import MongoEngine
 from flask_cors import CORS
 from api.v1.views import app_views
 
 
 app = Flask(__name__)
+db = MongoEngine()
 app.register_blueprint(app_views)
+app.config['MONGODB_SETTINGS'] = {
+                                  "db": "ency_db",
+                                  "host": "localhost",
+                                  "port": 27017,
+                                  }
+db.init_app(app)
 
 
 @app.errorhandler(404)

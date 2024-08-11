@@ -1,0 +1,5 @@
+// Creates the database "ency_db" and its collections
+// Execute using cat database_create | mongo
+use ency_db
+db.createCollection('Users')
+db.createCollection('Materials')
