@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 """Contains the MongoDB database class"""
 from mongoengine import Document, StringField, IntField
+from bson import ObjectId
 
 
 class UserInfo(Document):
@@ -20,9 +21,26 @@ class UserInfo(Document):
                       }
             return failed
 
+    def find_by_id(self, id):
+        """Find a user using the id created by the database"""
+        found = UserInfo.objects(id=ObjectId(id)).first()
+        return found
+
+    def user_modfy(self, id, **kwargs):
+        """Update the information of a user"""
+        user = self.find_by_id(id)
+        for key, value in kwargs.items():
+            setattr(user, key, value)
+        user.save()
+
+    def delete_by_id(self, id):
+        """Delete a user by their ID"""
+        UserInfo.objects(id=ObjectId(id)).delete()
+
     def to_json(self):
         """Returns the json version of data inside object"""
         return {
                 "username": self.username,
-                "email": self.email
+                "email": self.email,
+                "db ID": str(self.id)
                 }
