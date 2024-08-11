@@ -21,9 +21,10 @@ class UserInfo(Document):
                       }
             return failed
 
-    def find_by_id(self, id):
+    @classmethod
+    def find_by_id(cls, id):
         """Find a user using the id created by the database"""
-        found = UserInfo.objects(id=ObjectId(id)).first()
+        found = cls.objects(id=ObjectId(id)).first()
         return found
 
     def user_modfy(self, id, **kwargs):

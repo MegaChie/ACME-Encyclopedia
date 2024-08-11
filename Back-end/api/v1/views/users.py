@@ -26,7 +26,8 @@ def add_user():
         
 
 @app_views.route("/users/<id>", methods=["GET"], strict_slashes=False)
-def users(id):
+@app_views.route("/users", methods=["GET"], strict_slashes=False)
+def users(id=None):
     """List all users or a specific user if an ID is passed"""
     if not id:
         all_users = UserInfo.objects()
@@ -48,7 +49,7 @@ def users(id):
 
 
 @app_views.route("/edit_user/<id>", methods=["PUT"], strict_slashes=False)
-def user_edit(id):
+def user_edit(id=None):
     """Edit user information"""
     user = UserInfo.find_by_id(id)
 
@@ -59,7 +60,7 @@ def user_edit(id):
             not_json = {"Error": "Not a JSON"}
             return jsonify(not_json), 400
 
-        user.user_modfy(id, data)
+        user.user_modfy(id, **data)
         edited = {"Status": "User edited"}
         return jsonify(edited), 200
     else:
@@ -69,7 +70,7 @@ def user_edit(id):
 
 @app_views.route("/delete_users/<id>", methods=["DELETE"],
                  strict_slashes=False)
-def user_delete(id):
+def user_delete(id=None):
     """Deletes a user from database"""
     if id:
         user = UserInfo.find_by_id(id)
