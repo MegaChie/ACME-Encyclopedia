@@ -2,7 +2,7 @@
 """Contains the users haneling endpoints"""
 from api.v1.views import app_views
 from flask import jsonify, request
-from .database import UserInfo
+from database import UserInfo
 
 
 @app_views.route("/add_users", methods=["POST"], strict_slashes=False)

@@ -2,7 +2,7 @@
 """Contains the status of the API"""
 from api.v1.views import app_views
 from flask import jsonify
-from .database import UserInfo
+from database import UserInfo
 
 
 @app_views.route("/status", methods=["GET"], strict_slashes=False)
