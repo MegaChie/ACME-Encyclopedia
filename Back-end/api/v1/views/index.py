@@ -2,7 +2,7 @@
 """Contains the status of the API"""
 from api.v1.views import app_views
 from flask import jsonify
-from database import UserInfo
+from database import UserInfo, ArticleInfo
 
 
 @app_views.route("/status", methods=["GET"], strict_slashes=False)
@@ -18,3 +18,9 @@ def api_stats():
     user_count = UserInfo.objects.count()
     stats = {"Users": user_count}
     return jsonify(stats), 200
+
+
+@app_views.route("/articles", methods=["GET"], strict_slashes=False)
+def api_articles():
+    """Returns a list of articles"""
+    articles_count = ArticleInfo.objects.count()
