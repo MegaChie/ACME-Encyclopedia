@@ -2,6 +2,7 @@
 """Contains the users haneling endpoints"""
 from api.v1.views import app_views
 from flask import jsonify, request
+from flask_login import login_required
 from database import UserInfo
 
 
@@ -10,20 +11,22 @@ def add_user():
     """Adds a new user to the database"""
     if request.is_json:
         data = request.get_json()
-        if len(data.keys()) != 2:
+        if len(data.keys()) != 3:
             missing = {"Error": "Missing data"}
             return jsonify(missing), 400
 
         # Check for duplicates first
         new_user = UserInfo(username=data.get("username"),
-                            email=data.get("email"))
+                            email=data.get("email"),
+                            password=data.get("password"))
+        new_user.hash_password()
         new_user.add_to_coll()
         return jsonify(new_user.to_json()), 201
 
     else:
         not_json = {"Error": "Not a JSON"}
         return jsonify(not_json), 400
-        
+
 
 @app_views.route("/users/<id>", methods=["GET"], strict_slashes=False)
 @app_views.route("/users", methods=["GET"], strict_slashes=False)
@@ -35,7 +38,7 @@ def users(id=None):
         for user in all_users:
             temp = user.to_json()
             data.append(temp)
-        
+
         return jsonify({"All users": data}), 200
 
     else:
@@ -49,6 +52,7 @@ def users(id=None):
 
 
 @app_views.route("/edit_user/<id>", methods=["PUT"], strict_slashes=False)
+@login_required
 def user_edit(id=None):
     """Edit user information"""
     user = UserInfo.find_by_id(id)
@@ -70,6 +74,7 @@ def user_edit(id=None):
 
 @app_views.route("/delete_users/<id>", methods=["DELETE"],
                  strict_slashes=False)
+@login_required                 
 def user_delete(id=None):
     """Deletes a user from database"""
     if id:

@@ -1,13 +1,19 @@
 #!/usr/bin/python3
 """Contains the MongoDB database class"""
 from mongoengine import Document, StringField, IntField
+from flask_bcrypt import Bcrypt
 from bson import ObjectId
+from flask_login import UserMixin
+from api.v1.app import app
 
 
-class UserInfo(Document):
+bcrypt = Bcrypt(app)
+
+class UserInfo(Document, UserMixin):
     """Sets the details of the user"""
     username = StringField(required=True, unique=True)
     email = StringField(required=True, unique=True)
+    password = StringField(required=True, unique=True)
     meta = {"collection": "Users"}
 
     def add_to_coll(self):
@@ -37,6 +43,15 @@ class UserInfo(Document):
     def delete_by_id(self, id):
         """Delete a user by their ID"""
         UserInfo.objects(id=ObjectId(id)).delete()
+
+    def hash_password(self):
+        """Hashes the password"""
+        self.password = (bcrypt.generate_password_hash(self.password)
+                         .decode('utf-8'))
+
+    def is_password(self, password):
+        """Matches the hased password with the normal one"""
+        return bcrypt.check_password_hash(self.password, password)
 
     def to_json(self):
         """Returns the json version of data inside object"""
