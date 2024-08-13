@@ -27,10 +27,7 @@ def login():
         if user.is_password(password):
             user.authed = True
             user.save()
-            try:
-                login_user(user)
-            except:
-                print("error")
+            login_user(user)
             if current_user.is_authenticated:
                 print("User is authenticated")
             else:

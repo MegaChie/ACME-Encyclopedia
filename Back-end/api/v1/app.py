@@ -1,16 +1,19 @@
 #!/usr/bin/python3
 """Contains the https code messages handlers"""
 from flask import Flask, jsonify
+from flask_session import Session
 from flask_login import LoginManager, login_user, logout_user, login_required
 from flask_mongoengine import MongoEngine
 from flask_cors import CORS
 import secrets
+from datetime import timedelta
 from api.v1.views import app_views
 from database import UserInfo
 
 
 app = Flask(__name__)
-cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
+cors = CORS(app, resources={r"/api/*": {"origins": "*"}},
+            supports_credentials=True)
 db = MongoEngine()
 app.config["MONGODB_SETTINGS"] = {
                                   "db": "ency_db",
@@ -25,6 +28,12 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "app_views.login" # The login page
 app.secret_key = secrets.token_hex(16)
+app.config["SESSION_COOKIE_NAME"] = "Auth"
+app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(hours=8)
+app.config["SESSION_TYPE"] = "mongodb"
+app.config["SESSION_PERMANENT"] = False
+app.config["SESSION_USE_SIGNER"] = True
+Session(app)
 
 
 
