@@ -4,7 +4,7 @@ from mongoengine import Document, StringField
 from flask_bcrypt import Bcrypt
 from bson import ObjectId
 from flask_login import UserMixin
-from api.v1.app import app, load_user
+from api.v1.app import app
 
 
 bcrypt = Bcrypt(app)

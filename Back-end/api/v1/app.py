@@ -41,10 +41,6 @@ def server_error(_):
     return jsonify(error_message), 500
 
 
-def load_user(user_id):
-    return UserInfo.objects(id=ObjectId(user_id)).first()
-
-
 if __name__ == "__main__":
     """Starts the API"""
     app.run(debug=True)
