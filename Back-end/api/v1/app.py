@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """Contains the https code messages handlers"""
-from flask_login import LoginManager, login_user, logout_user
 from flask import Flask, jsonify
+from flask_login import LoginManager, login_user, logout_user, login_required
 from flask_mongoengine import MongoEngine
 from flask_cors import CORS
 from api.v1.views import app_views
@@ -20,6 +20,7 @@ app.register_blueprint(app_views)
 
 # Login specific
 db.init_app(app)
+login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login' # The login page
 

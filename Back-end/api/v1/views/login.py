@@ -29,12 +29,11 @@ def login():
             user.save()
             login_user(user)
             return redirect(url_for('dashboard'))
-        else:
-            # Add login page
-            # return redirect(url_for('login.login'))
-    else:
-        not_json = {"Error": "Not a JSON"}
-        return jsonify(not_json), 400
+        # Add login page
+        # return redirect(url_for('login.login'))
+
+    not_json = {"Error": "Not a JSON"}
+    return jsonify(not_json), 400
 
 
 @app_views.route("/logout", methods=["GET"])

@@ -1,21 +1,21 @@
 #!/usr/bin/python3
 """Contains the MongoDB database class"""
-from mongoengine import Document, StringField
+from mongoengine import Document, StringField, BooleanField
 from flask_bcrypt import Bcrypt
 from bson import ObjectId
 from flask_login import UserMixin
-from api.v1.app import app
 
 
-bcrypt = Bcrypt(app)
+bcrypt = Bcrypt()
 
 class UserInfo(Document, UserMixin):
     """Sets the details of the user"""
     username = StringField(required=True, unique=True)
     email = StringField(required=True, unique=True)
     password = StringField(required=True, unique=True)
-    authed = False
+    authed = BooleanField(default=False)
     meta = {"collection": "Users"}
+
 
     def add_to_coll(self):
         """Adds the document to the proper collection"""
@@ -29,7 +29,7 @@ class UserInfo(Document, UserMixin):
             return failed
 
     @classmethod
-    def find_by_id(cls, id) -> UserInfo:
+    def find_by_id(cls, id):
         """Find a user using the id created by the database"""
         found = cls.objects(id=ObjectId(id)).first()
         return found
