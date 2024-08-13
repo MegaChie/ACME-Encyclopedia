@@ -25,6 +25,8 @@ def login():
             return jsonify(no_user), 400
 
         if user.is_password(password):
+            user.authed = True
+            user.save()
             login_user(user)
             return redirect(url_for('dashboard'))
         else:
@@ -39,4 +41,6 @@ def login():
 @login_required
 def logout():
     logout_user()
+    user.authed = False
+    user.save()
     return redirect(url_for('login'))

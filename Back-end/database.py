@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 """Contains the MongoDB database class"""
-from mongoengine import Document, StringField, IntField
+from mongoengine import Document, StringField
 from flask_bcrypt import Bcrypt
 from bson import ObjectId
 from flask_login import UserMixin
@@ -14,6 +14,7 @@ class UserInfo(Document, UserMixin):
     username = StringField(required=True, unique=True)
     email = StringField(required=True, unique=True)
     password = StringField(required=True, unique=True)
+    authed = False
     meta = {"collection": "Users"}
 
     def add_to_coll(self):
@@ -55,9 +56,7 @@ class UserInfo(Document, UserMixin):
 
     def is_authenticated(self) -> bool:
         """Returns a boolen to indicate whether a user is loged in or not"""
-        if load_user(user_id):
-            return True
-        return False
+        return self.authed
 
     def is_active(self):
         """
