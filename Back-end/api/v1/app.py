@@ -4,6 +4,7 @@ from flask import Flask, jsonify
 from flask_session import Session
 from flask_login import LoginManager, login_user, logout_user, login_required
 from flask_mongoengine import MongoEngine
+from pymongo import MongoClient
 from flask_cors import CORS
 import secrets
 from datetime import timedelta
@@ -31,6 +32,9 @@ app.secret_key = secrets.token_hex(16)
 app.config["SESSION_COOKIE_NAME"] = "Auth"
 app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(hours=8)
 app.config["SESSION_TYPE"] = "mongodb"
+app.config["SESSION_MONGODB"] = MongoClient("localhost", 27017)
+app.config["SESSION_MONGODB_DB"] = "flask_session"
+app.config["SESSION_MONGODB_COLLECT"] = "sessions"
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_USE_SIGNER"] = True
 Session(app)

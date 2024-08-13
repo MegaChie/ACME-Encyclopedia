@@ -28,6 +28,9 @@ def login():
             user.authed = True
             user.save()
             login_user(user)
+            from api.v1.app import app
+            from flask import session
+            app.logger.info(f"User {user.id} logged in, session ID: {session['_user_id']}")
             if current_user.is_authenticated:
                 print("User is authenticated")
             else:
