@@ -74,7 +74,7 @@ def user_edit(id=None):
 
 @app_views.route("/delete_users/<id>", methods=["DELETE"],
                  strict_slashes=False)
-@login_required                 
+@login_required
 def user_delete(id=None):
     """Deletes a user from database"""
     if id:

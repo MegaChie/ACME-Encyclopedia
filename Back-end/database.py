@@ -4,7 +4,7 @@ from mongoengine import Document, StringField, IntField
 from flask_bcrypt import Bcrypt
 from bson import ObjectId
 from flask_login import UserMixin
-from api.v1.app import app
+from api.v1.app import app, load_user
 
 
 bcrypt = Bcrypt(app)
@@ -28,7 +28,7 @@ class UserInfo(Document, UserMixin):
             return failed
 
     @classmethod
-    def find_by_id(cls, id):
+    def find_by_id(cls, id) -> UserInfo:
         """Find a user using the id created by the database"""
         found = cls.objects(id=ObjectId(id)).first()
         return found
@@ -49,9 +49,25 @@ class UserInfo(Document, UserMixin):
         self.password = (bcrypt.generate_password_hash(self.password)
                          .decode('utf-8'))
 
-    def is_password(self, password):
+    def is_password(self, password) -> bool:
         """Matches the hased password with the normal one"""
         return bcrypt.check_password_hash(self.password, password)
+
+    def is_authenticated(self) -> bool:
+        """Returns a boolen to indicate whether a user is loged in or not"""
+        if load_user(user_id):
+            return True
+        return False
+
+    def is_active(self):
+        """
+        Retuens a boolen to indicate is user is still active.
+        More logic to deactivate user is to come.
+        """
+        return True
+
+    def get_id(self):
+        return str(self.id)
 
     def to_json(self):
         """Returns the json version of data inside object"""
