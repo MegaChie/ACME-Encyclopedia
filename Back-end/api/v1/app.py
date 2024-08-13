@@ -4,6 +4,7 @@ from flask import Flask, jsonify
 from flask_login import LoginManager, login_user, logout_user, login_required
 from flask_mongoengine import MongoEngine
 from flask_cors import CORS
+import secrets
 from api.v1.views import app_views
 from database import UserInfo
 
@@ -11,7 +12,7 @@ from database import UserInfo
 app = Flask(__name__)
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 db = MongoEngine()
-app.config['MONGODB_SETTINGS'] = {
+app.config["MONGODB_SETTINGS"] = {
                                   "db": "ency_db",
                                   "host": "localhost",
                                   "port": 27017,
@@ -22,7 +23,9 @@ app.register_blueprint(app_views)
 db.init_app(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
-login_manager.login_view = 'login' # The login page
+login_manager.login_view = "app_views.login" # The login page
+app.secret_key = secrets.token_hex(16)
+
 
 
 @app.errorhandler(404)
@@ -32,14 +35,9 @@ def not_found(_):
     return jsonify(not_found), 404
 
 
-@app.errorhandler(500)
-def server_error(_):
-    """
-    Server error page loader.
-    Only for devolopers.
-    """
-    error_message = {"Error": "Server incountered an error. Pleses check logs"}
-    return jsonify(error_message), 500
+@login_manager.user_loader
+def load_user(user_id):
+    return UserInfo.find_by_id(user_id)
 
 
 if __name__ == "__main__":

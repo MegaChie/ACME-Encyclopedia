@@ -2,7 +2,7 @@
 """Contains the auth of the API"""
 from api.v1.views import app_views
 from flask import jsonify, request, redirect, url_for
-from flask_login import login_user, logout_user, login_required
+from flask_login import login_user, logout_user, login_required, current_user
 from database import UserInfo
 
 
@@ -27,8 +27,17 @@ def login():
         if user.is_password(password):
             user.authed = True
             user.save()
-            login_user(user)
-            return redirect(url_for('dashboard'))
+            try:
+                login_user(user)
+            except:
+                print("error")
+            if current_user.is_authenticated:
+                print("User is authenticated")
+            else:
+                print("User is not authenticated")
+            logged = {"Status": "Loged in!"}
+            # return redirect(url_for('dashboard'))
+            return jsonify(logged), 200
         # Add login page
         # return redirect(url_for('login.login'))
 
