@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+# Installs all dependencies for the project
+
+pip install flask
+pip install Flask-Cors
+pip uninstall flask-mongoengine
+pip install git+https://github.com/idoshr/flask-mongoengine.git@1.0.1
+pip install mongoengine
