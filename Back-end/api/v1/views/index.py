@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """Contains the status of the API"""
 from api.v1.views import app_views
-from flask import jsonify
+from flask import jsonify, request
 from database import UserInfo
 
 
@@ -18,3 +18,19 @@ def api_stats():
     user_count = UserInfo.objects.count()
     stats = {"Users": user_count}
     return jsonify(stats), 200
+
+
+@app_views.route('/check_session', methods=['GET'])
+def check_session():
+    from flask_login import current_user
+    if current_user.is_authenticated:
+        return jsonify({"Status": "Session is active", "User": current_user.username})
+    else:
+        return jsonify({"Status": "No active session",
+                        "cookie": request.cookies.get("Auth")})
+
+
+@app_views.route('/debug_session', methods=['GET'])
+def debug_session():
+    from flask import session
+    return jsonify({"session": dict(session)})

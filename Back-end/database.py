@@ -1,14 +1,21 @@
 #!/usr/bin/python3
 """Contains the MongoDB database class"""
-from mongoengine import Document, StringField, IntField
+from mongoengine import Document, StringField, BooleanField
+from flask_bcrypt import Bcrypt
 from bson import ObjectId
+from flask_login import UserMixin
 
 
-class UserInfo(Document):
+bcrypt = Bcrypt()
+
+class UserInfo(Document, UserMixin):
     """Sets the details of the user"""
     username = StringField(required=True, unique=True)
     email = StringField(required=True, unique=True)
+    password = StringField(required=True, unique=True)
+    authed = BooleanField(default=False)
     meta = {"collection": "Users"}
+
 
     def add_to_coll(self):
         """Adds the document to the proper collection"""
@@ -37,6 +44,25 @@ class UserInfo(Document):
     def delete_by_id(self, id):
         """Delete a user by their ID"""
         UserInfo.objects(id=ObjectId(id)).delete()
+
+    def hash_password(self):
+        """Hashes the password"""
+        self.password = (bcrypt.generate_password_hash(self.password)
+                         .decode('utf-8'))
+
+    def is_password(self, password) -> bool:
+        """Matches the hased password with the normal one"""
+        return bcrypt.check_password_hash(self.password, password)
+
+    def is_active(self):
+        """
+        Retuens a boolen to indicate is user is still active.
+        More logic to deactivate user is to come.
+        """
+        return True
+
+    def get_id(self):
+        return str(self.id)
 
     def to_json(self):
         """Returns the json version of data inside object"""
