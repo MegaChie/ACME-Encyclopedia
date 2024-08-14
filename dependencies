@@ -4,5 +4,7 @@
 pip install flask
 pip install Flask-Cors
 pip uninstall flask-mongoengine
+pip install flask-bcrypt
+pip instal flask-login
 pip install git+https://github.com/idoshr/flask-mongoengine.git@1.0.1
 pip install mongoengine
