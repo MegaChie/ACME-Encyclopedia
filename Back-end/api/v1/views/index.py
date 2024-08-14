@@ -2,7 +2,7 @@
 """Contains the status of the API"""
 from api.v1.views import app_views
 from flask import jsonify, request
-from database import UserInfo
+from database import UserInfo, ArticleInfo 
 
 
 @app_views.route("/status", methods=["GET"], strict_slashes=False)
@@ -16,7 +16,8 @@ def api_status():
 def api_stats():
     """Returns the number of users and materials"""
     user_count = UserInfo.objects.count()
-    stats = {"Users": user_count}
+    article_count = ArticleInfo.objects.count()
+    stats = {"Users": user_count, "Articles": article_count}
     return jsonify(stats), 200
 
 

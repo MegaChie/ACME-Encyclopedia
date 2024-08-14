@@ -8,3 +8,5 @@ pip install flask-bcrypt
 pip instal flask-login
 pip install git+https://github.com/idoshr/flask-mongoengine.git@1.0.1
 pip install mongoengine
+pip install flask_oauthlib
+pip install Werkzeug==2.2.2
