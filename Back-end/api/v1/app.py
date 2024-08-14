@@ -22,14 +22,17 @@ app.config["MONGODB_SETTINGS"] = {
                                   "port": 27017,
                                   }
 app.register_blueprint(app_views)
+db.init_app(app)
 
 # Login specific
-db.init_app(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "app_views.login" # The login page
-app.secret_key = secrets.token_hex(16)
+app.config["SECRET_KEY"] = secrets.token_hex(16)
 app.config["SESSION_COOKIE_NAME"] = "Auth"
+app.config["SESSION_COOKIE_HTTPONLY"] = True
+app.config["SESSION_COOKIE_SECURE"] = False
+app.config["SESSION_COOKIE_PATH"] = "/api/"
 app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(hours=8)
 app.config["SESSION_TYPE"] = "mongodb"
 app.config["SESSION_MONGODB"] = MongoClient("localhost", 27017)

@@ -54,10 +54,6 @@ class UserInfo(Document, UserMixin):
         """Matches the hased password with the normal one"""
         return bcrypt.check_password_hash(self.password, password)
 
-    def is_authenticated(self) -> bool:
-        """Returns a boolen to indicate whether a user is loged in or not"""
-        return self.authed
-
     def is_active(self):
         """
         Retuens a boolen to indicate is user is still active.

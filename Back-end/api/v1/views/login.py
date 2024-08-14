@@ -25,8 +25,6 @@ def login():
             return jsonify(no_user), 400
 
         if user.is_password(password):
-            user.authed = True
-            user.save()
             login_user(user)
             from api.v1.app import app
             from flask import session
@@ -37,7 +35,7 @@ def login():
                 print("User is not authenticated")
             logged = {"Status": "Loged in!"}
             # return redirect(url_for('dashboard'))
-            return jsonify(logged), 200
+            return jsonify(logged), 201
         # Add login page
         # return redirect(url_for('login.login'))
 
@@ -49,6 +47,6 @@ def login():
 @login_required
 def logout():
     logout_user()
-    user.authed = False
-    user.save()
-    return redirect(url_for('login'))
+    loged_out = {"Status": "Logged out! Please Sign in again"}
+    return jsonify(loged_out), 201
+    # return redirect(url_for('login'))

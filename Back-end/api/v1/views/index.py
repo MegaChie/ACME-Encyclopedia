@@ -28,3 +28,9 @@ def check_session():
     else:
         return jsonify({"Status": "No active session",
                         "cookie": request.cookies.get("Auth")})
+
+
+@app_views.route('/debug_session', methods=['GET'])
+def debug_session():
+    from flask import session
+    return jsonify({"session": dict(session)})
