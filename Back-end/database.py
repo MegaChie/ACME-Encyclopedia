@@ -83,7 +83,7 @@ class ArticleInfo(Document):
     """Represents an article in the database"""
     title = StringField(required=True, unique=True)
     content = StringField(required=True)
-    tags = ListField(StringField(), required=False)
+    tags = ListField(required=False)
     created_at = DateTimeField(default=datetime.utcnow)
     updated_at = DateTimeField(default=datetime.utcnow)
     meta = {"collection": "Articles"}

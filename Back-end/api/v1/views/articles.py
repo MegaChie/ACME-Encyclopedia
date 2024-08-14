@@ -13,7 +13,9 @@ def add_article():
         if not data.get('title') or not data.get('content'):
             missing = {"Error": "Missing 'title' and 'content' fields"}
             return jsonify(missing), 400
-        new_article = ArticleInfo(data.get('title'), data.get('content'), data.get('tags'), [])
+        new_article = ArticleInfo(title=data.get('title'),
+                                  content=data.get('content'),
+                                  tags=data.get('tags'))
         new_article.add_to_coll()
         return jsonify(new_article), 201
     else:
