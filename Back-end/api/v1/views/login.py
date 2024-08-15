@@ -29,14 +29,14 @@ def login_github_callback():
     session['github_token'] = token
     existing_user = UserInfo.find_by_email(user_email)
     if existing_user:
-        session['_user_id'] = str(existing_user.id)
+        session['user_id'] = str(existing_user.id)
         return jsonify({'user_id': str(existing_user.id)}), 200
 
     # if user doesn't exist create new one
     new_user = UserInfo(username=user_name, email=user_email)
     new_user.authed = True
     new_user.add_to_coll()
-    session['_user_id'] = str(new_user.id)
+    session['user_id'] = str(new_user.id)
     return jsonify({'user_id': str(new_user.id)}), 200
 
 
@@ -59,12 +59,12 @@ def login_google_oauth_callback():
     session['google_token'] = token
     existing_user = UserInfo.find_by_email(user_name)
     if existing_user:
-        session['_user_id'] = str(existing_user.id)
+        session['user_id'] = str(existing_user.id)
         return jsonify({'user_id': str(existing_user.id)}), 200
     new_user = UserInfo(username=user_name, email=user_email)
     new_user.authed = True
     new_user.add_to_coll()
-    session['_user_id'] = str(new_user.id)
+    session['user_id'] = str(new_user.id)
     return jsonify({'user_id': str(new_user.id)}), 200
 
 
