@@ -1,6 +1,9 @@
 from api.v1.views import app_views
 from flask import jsonify, request
+
 from flask_login import login_required , login_user, logout_user, login_required, current_user
+
+
 from database import ArticleInfo
 
 
@@ -13,10 +16,15 @@ def add_article():
         if not data.get('title') or not data.get('content'):
             missing = {"Error": "Missing 'title' and 'content' fields"}
             return jsonify(missing), 400
+        
         new_article = ArticleInfo(title=data.get('title'),
                                   content=data.get('content'),
                                   tags=data.get('tags'),
-                                  author=current_user.author)
+
+                                  author=current_user.username)
+
+                                  author = current_user.username)
+
         new_article.add_to_coll()
         return jsonify(new_article), 201
     else:

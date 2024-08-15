@@ -130,6 +130,7 @@ class ArticleInfo(Document):
             "tags": self.tags,
             "created_at": self.created_at.isoformat(),
             "updated_at": self.updated_at.isoformat(),
+            "Author": self.author,
             "db ID": str(self.id)
         }
 
