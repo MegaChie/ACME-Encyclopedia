@@ -20,10 +20,8 @@ def add_article():
         new_article = ArticleInfo(title=data.get('title'),
                                   content=data.get('content'),
                                   tags=data.get('tags'),
-
                                   author=current_user.username)
 
-                                  author = current_user.username)
 
         new_article.add_to_coll()
         return jsonify(new_article), 201
