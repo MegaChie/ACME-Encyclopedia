@@ -1,5 +1,7 @@
-import React from "react";
+
+          import React from "react";
 import "./signup.css";
+
 
 const Signup = () => {
   return (
@@ -47,4 +49,5 @@ const Signup = () => {
 };
 
 export default Signup;
+
 
