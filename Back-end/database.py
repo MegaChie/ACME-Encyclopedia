@@ -84,6 +84,7 @@ class ArticleInfo(Document):
     title = StringField(required=True, unique=True)
     content = StringField(required=True)
     tags = ListField(required=False)
+    author = StringField(required=False)
     created_at = DateTimeField(default=datetime.utcnow)
     updated_at = DateTimeField(default=datetime.utcnow)
     meta = {"collection": "Articles"}
@@ -129,6 +130,7 @@ class ArticleInfo(Document):
             "tags": self.tags,
             "created_at": self.created_at.isoformat(),
             "updated_at": self.updated_at.isoformat(),
+            "Author": self.author,
             "db ID": str(self.id)
         }
 
