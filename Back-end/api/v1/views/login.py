@@ -1,11 +1,12 @@
 #!/usr/bin/python3
 """Contains the auth of the API"""
+import requests
 
 from api.v1.views import app_views
 from flask import jsonify, request, session, url_for
 from flask_login import login_user, logout_user, login_required, current_user
 from database import UserInfo
-from api.v1.app import oauth
+from requests.auth import HTTPBasicAuth
 
 # Set the redirect URI for GitHub (should match what you registered on GitHub)
 github_redirect_uri = 'http://localhost:5000/api/v1/auth/github/callback'
@@ -14,14 +15,14 @@ google_redirect_uri = 'http://localhost:5000/api/v1/auth/google/callback'
 
 @app_views.route('/login/github')
 def login_github():
-    github = oauth.github()
-    redirect_uri = url_for('login.login_github_callback', _external=True)
-    return github.authorize(github_redirect_uri=redirect_uri)
+    from api.v1.app.app import github
+    redirect_uri = url_for('app_views.login_github_callback', _external=True)
+    return github.authorize_redirect(redirect_uri)
 
 
 @app_views.route('auth/github/callback')
 def login_github_callback():
-    github = oauth.github()
+    from api.v1.app.app import github
     token = github.authorize_access_token()
     user_info = github.get('user').json()
     user_email = github.get('user/emails').json()[0]['email']
@@ -31,6 +32,8 @@ def login_github_callback():
     if existing_user:
         session['user_id'] = str(existing_user.id)
         return jsonify({'user_id': str(existing_user.id)}), 200
+    else:
+        return jsonify({'error': 'User is not authenticated or doesn\'t exist'}), 401
 
     # if user doesn't exist create new one
     new_user = UserInfo(username=user_name, email=user_email)
@@ -107,7 +110,12 @@ def login():
 
 @app_views.route("/logout", methods=["GET"])
 def logout():
-    print(session)
+    if 'github_token' in session:
+        logout_user()
+        loged_out = {"Status": "Logged out! Please Sign in again"}
+        return jsonify(loged_out), 201
+
+
     if not current_user.is_authenticated:
         print(current_user)
         return jsonify({"Error": "Not authenticated"}), 401

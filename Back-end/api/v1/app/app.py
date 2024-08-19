@@ -10,13 +10,30 @@ from flask_cors import CORS
 import secrets
 from datetime import timedelta
 from database import UserInfo
-from api.v1.app import oauth
+from authlib.integrations.flask_client import OAuth
+
+
+
+# Initialize the OAuth object
+oauth = OAuth()
+
+github = oauth.register(
+    name='github',
+    client_id='Ov23lirRhAXY9LeFYiUO',
+    client_secret='20351d50e422c9334f1f2f9b82099afd7c77962f',
+    access_token_url='https://github.com/login/oauth/access_token',
+    authorize_url='https://github.com/login/oauth/authorize',
+    api_base_url='https://api.github.com/',
+    client_kwargs={'scope': 'user:email'},
+)
+
+
 app = Flask(__name__)
-app.secret_key = "your_secret_key"
 oauth.init_app(app)
 
 from api.v1.views import app_views
 app.register_blueprint(app_views)
+
 
 
 
