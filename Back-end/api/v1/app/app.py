@@ -7,6 +7,7 @@ from flask_login import LoginManager, login_user, logout_user, login_required
 from flask_mongoengine import MongoEngine
 from pymongo import MongoClient
 from flask_cors import CORS
+from os import getenv
 import secrets
 from datetime import timedelta
 from database import UserInfo
@@ -25,7 +26,7 @@ cors = CORS(app, resources={r"/api/*": {"origins": "*"}},
 db = MongoEngine()
 app.config["MONGODB_SETTINGS"] = {
     "db": "ency_db",
-    "host": "localhost",
+    "host": getenv("ip") or "localhost",
     "port": 27017,
 }
 
@@ -43,7 +44,8 @@ app.config["SESSION_COOKIE_SECURE"] = False
 app.config["SESSION_COOKIE_PATH"] = "/api/"
 app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(hours=8)
 app.config["SESSION_TYPE"] = "mongodb"
-app.config["SESSION_MONGODB"] = MongoClient("localhost", 27017)
+app.config["SESSION_MONGODB"] = MongoClient(getenv("ip") or "localhost",
+                                            27017)
 app.config["SESSION_MONGODB_DB"] = "flask_session"
 app.config["SESSION_MONGODB_COLLECT"] = "sessions"
 app.config["SESSION_PERMANENT"] = False
