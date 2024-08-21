@@ -1,111 +1,74 @@
 #!/usr/bin/python3
 """Contains the auth of the API"""
+
 from api.v1.views import app_views
-from flask import jsonify, request, redirect, url_for, Blueprint, session
+from flask import jsonify, request, session, url_for
 from flask_login import login_user, logout_user, login_required, current_user
 from database import UserInfo
-from flask_oauthlib.client import OAuth
-
-oauth = OAuth()
-
-# github config
-
-github = oauth.remote_app(
-    'github',
-    consumer_key='YOUR_GITHUB_CLIENT_ID',
-    consumer_secret='YOUR_GITHUB_CLIENT_SECRET',
-    request_token_params={
-        'scope': 'user:email',
-    },
-    base_url='https://api.github.com/',
-    request_token_url=None,
-    access_token_method='POST',
-    access_token_url='https://github.com/login/oauth/access_token',
-    authorize_url='https://github.com/login/oauth/authorize'
-)
+from api.v1.app import oauth
 
 # Set the redirect URI for GitHub (should match what you registered on GitHub)
 github_redirect_uri = 'http://localhost:5000/api/v1/auth/github/callback'
-
-google = oauth.remote_app(
-    'google',
-    consumer_key='YOUR_GOOGLE_CLIENT_ID',
-    consumer_secret='YOUR_GOOGLE_CLIENT_SECRET',
-    request_token_params={
-        'scope': 'email profile',
-    },
-    base_url='https://www.googleapis.com/oauth2/v1/',
-    request_token_url=None,
-    access_token_method='POST',
-    access_token_url='https://accounts.google.com/o/oauth2/token',
-    authorize_url='https://accounts.google.com/o/oauth2/auth',
-)
 google_redirect_uri = 'http://localhost:5000/api/v1/auth/google/callback'
 
 
 @app_views.route('/login/github')
 def login_github():
-    return github.authorize(github_redirect_uri=github_redirect_uri)
+    github = oauth.github()
+    redirect_uri = url_for('login.login_github_callback', _external=True)
+    return github.authorize(github_redirect_uri=redirect_uri)
 
 
 @app_views.route('auth/github/callback')
 def login_github_callback():
-    response = github.authorized_response()
-    if response is None or 'access_token' not in response:
-        return jsonify({'error': 'Access denied'}), 403
-    session['github_token'] = (response.get('access_token'), '')
-    user_name = github.get('user').get('login')
-    emails = github.get('user/emails').data
-    primary_email = next(email['email'] for email in emails if email['primary'])
-
-    existing_user = UserInfo.find_by_email(primary_email)
+    github = oauth.github()
+    token = github.authorize_access_token()
+    user_info = github.get('user').json()
+    user_email = github.get('user/emails').json()[0]['email']
+    user_name = user_info['login']
+    session['github_token'] = token
+    existing_user = UserInfo.find_by_email(user_email)
     if existing_user:
         session['user_id'] = str(existing_user.id)
         return jsonify({'user_id': str(existing_user.id)}), 200
 
     # if user doesn't exist create new one
-    new_user = UserInfo(username=user_name, email=primary_email)
+    new_user = UserInfo(username=user_name, email=user_email)
     new_user.authed = True
     new_user.add_to_coll()
     session['user_id'] = str(new_user.id)
     return jsonify({'user_id': str(new_user.id)}), 200
-
-
-@github.tokengetter
-def get_github_oauth_token():
-    return session.get('github_token')
 
 
 @app_views.route('/login/google')
 def login_google_oauth():
-    return google.authorize(google_redirect_uri=google_redirect_uri)
+    google = oauth.google()
+    redirect_uri = url_for('login.login_google_oauth_callback', _external=True)
+    return google.authorize(google_redirect_uri=redirect_uri)
 
 
 @app_views.route('/login/google/callback')
 def login_google_oauth_callback():
-    response = google.authorized_response()
-    if response is None or 'access_token' not in response:
+    google = oauth.google()
+    token = google.authorize_access_token()
+    user_info = google.get('user').json()
+    user_email = user_info['email']
+    user_name = user_info['login']
+    if user_info is None or token is None:
         return jsonify({'error': 'Access denied'}), 403
-    session['google_token'] = (response.get('access_token'), '')
-    user_name = google.get('user').get('login')
-    user_info = google.get('userinfo').data
+    session['google_token'] = token
     existing_user = UserInfo.find_by_email(user_name)
     if existing_user:
         session['user_id'] = str(existing_user.id)
         return jsonify({'user_id': str(existing_user.id)}), 200
-    new_user = UserInfo(username=user_name, email=user_info['email'])
+    new_user = UserInfo(username=user_name, email=user_email)
     new_user.authed = True
     new_user.add_to_coll()
     session['user_id'] = str(new_user.id)
     return jsonify({'user_id': str(new_user.id)}), 200
 
 
-@google.tokengetter
-def get_google_oauth_token():
-    return session.get('google_token')
-
-
-@app_views.route("/login_users", methods=["POST"], strict_slashes=False)
+@app_views.route("/login", methods=["POST"], strict_slashes=False)
 def login():
     """Login a user while directing new one to signup"""
     if request.is_json:
@@ -125,14 +88,14 @@ def login():
 
         if user.is_password(password):
             login_user(user)
-            from api.v1.app import app
-            from flask import session
+            from api.v1.app.app import app
             app.logger.info(f"User {user.id} logged in, session ID: {session['_user_id']}")
             if current_user.is_authenticated:
                 print("User is authenticated")
             else:
                 print("User is not authenticated")
-            logged = {"Status": "Loged in!"}
+
+            logged = {"Status": "Logged in!"}
             # return redirect(url_for('dashboard'))
             return jsonify(logged), 201
         # Add login page
@@ -143,8 +106,11 @@ def login():
 
 
 @app_views.route("/logout", methods=["GET"])
-@login_required
 def logout():
+    print(session)
+    if not current_user.is_authenticated:
+        print(current_user)
+        return jsonify({"Error": "Not authenticated"}), 401
     logout_user()
     loged_out = {"Status": "Logged out! Please Sign in again"}
     return jsonify(loged_out), 201

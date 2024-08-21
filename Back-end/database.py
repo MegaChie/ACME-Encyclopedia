@@ -2,7 +2,9 @@
 """Contains the MongoDB database class"""
 from datetime import datetime
 
-from mongoengine import Document, StringField, BooleanField, ListField, DateTimeField
+from mongoengine import (Document, StringField,
+                         BooleanField, ListField,
+                         DateTimeField)
 from flask_bcrypt import Bcrypt
 from bson import ObjectId
 from flask_login import UserMixin
@@ -45,6 +47,8 @@ class UserInfo(Document, UserMixin):
         user = self.find_by_id(id)
         for key, value in kwargs.items():
             setattr(user, key, value)
+        user.password = (bcrypt.generate_password_hash(user.password)
+                         .decode("utf-8"))
         user.save()
 
     def delete_by_id(self, id):
@@ -54,7 +58,7 @@ class UserInfo(Document, UserMixin):
     def hash_password(self):
         """Hashes the password"""
         self.password = (bcrypt.generate_password_hash(self.password)
-                         .decode('utf-8'))
+                         .decode("utf-8"))
 
     def is_password(self, password) -> bool:
         """Matches the hased password with the normal one"""
@@ -84,6 +88,9 @@ class ArticleInfo(Document):
     title = StringField(required=True, unique=True)
     content = StringField(required=True)
     tags = ListField(required=False)
+    author = StringField(required=False)
+    status = StringField(choices=["draft", "published"], required=False,
+                         default="published")
     created_at = DateTimeField(default=datetime.utcnow)
     updated_at = DateTimeField(default=datetime.utcnow)
     meta = {"collection": "Articles"}
@@ -129,7 +136,9 @@ class ArticleInfo(Document):
             "tags": self.tags,
             "created_at": self.created_at.isoformat(),
             "updated_at": self.updated_at.isoformat(),
-            "db ID": str(self.id)
+            "Author": self.author,
+            "db ID": str(self.id),
+            "status": self.status
         }
 
     @classmethod
