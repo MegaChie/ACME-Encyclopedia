@@ -77,8 +77,8 @@ class UserInfo(Document, UserMixin):
     def to_json(self):
         """Returns the json version of data inside object"""
         return {
-            "username": self.username,
-            "email": self.email,
+            "User name": self.username,
+            "Email": self.email,
             "db ID": str(self.id)
         }
 
@@ -91,6 +91,8 @@ class ArticleInfo(Document):
     author = StringField(required=False)
     status = StringField(choices=["draft", "published"], required=False,
                          default="published")
+    language = StringField(choices=["eng", "esp"], required=True,
+                           default="eng")
     created_at = DateTimeField(default=datetime.utcnow)
     updated_at = DateTimeField(default=datetime.utcnow)
     meta = {"collection": "Articles"}
@@ -131,14 +133,15 @@ class ArticleInfo(Document):
     def to_json(self):
         """Returns the JSON version of the article data"""
         return {
-            "title": self.title,
-            "content": self.content,
-            "tags": self.tags,
-            "created_at": self.created_at.isoformat(),
-            "updated_at": self.updated_at.isoformat(),
+            "Title": self.title,
+            "Tontent": self.content,
+            "Tags": self.tags,
+            "Created at": self.created_at.isoformat(),
+            "Updated_at": self.updated_at.isoformat(),
             "Author": self.author,
             "db ID": str(self.id),
-            "status": self.status
+            "Status": self.status,
+            "Language": self.language
         }
 
     @classmethod

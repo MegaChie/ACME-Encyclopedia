@@ -12,15 +12,17 @@ def add_article():
     """add article to the database."""
     if request.is_json:
         data = request.get_json()
-        if not data.get("title") or not data.get("content"):
-            missing = {"Error": "Missing \"title\" and \"content\" fields"}
+        if (not data.get("title") or not data.get("content")
+           or not data.get("language")):
+            missing = {"Error": "Plese add a tile, content and language"}
             return jsonify(missing), 400
 
         new_article = ArticleInfo(title=data.get("title"),
                                   content=data.get("content"),
                                   tags=data.get("tags"),
-                                  status=data.get("status"),
-                                  author=current_user.username)
+                                  status=data.get("status"), # If selected
+                                  author=current_user.username,
+                                  language=data.get("language"))
 
 
         new_article.add_to_coll()

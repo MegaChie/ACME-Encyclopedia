@@ -3,7 +3,7 @@
 from flask import Flask
 from flask import jsonify
 from flask_session import Session
-from flask_login import LoginManager, login_user, logout_user, login_required
+from flask_login import LoginManager
 from flask_mongoengine import MongoEngine
 from pymongo import MongoClient
 from flask_cors import CORS
