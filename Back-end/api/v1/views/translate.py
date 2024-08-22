@@ -32,7 +32,7 @@ def translate_article(translate_this => list, next => str,
 
 
 @app_views.route("/translate/<id>/<lan>", methods=["POST"])
-@login_required        
+@login_required
 def translate(id=None, lan=None):
     """Translates the article, displays it, and saves it to the database"""
     if not id:
@@ -40,7 +40,7 @@ def translate(id=None, lan=None):
         return jsonify(no_article), 404
     if not lan:
         return redirect(url_for(articles.get_article(id)))
-        
+
     article = ArticleInfo.find_by_id(id)
     if not article:
         no_article = {"Error": "Article not found"}
@@ -56,6 +56,6 @@ def translate(id=None, lan=None):
 
     new_article = ArticleInfo(title=translated[0], content=translated[1],
                               tags=translated[2:], language=lan,
-                              author=article_data.get("Author"))                                    
-    new_article.add_to_coll()                              
-    return jsonify(new_article.to_json()), 201    
+                              author=article_data.get("Author"))
+    new_article.add_to_coll()
+    return jsonify(new_article.to_json()), 201

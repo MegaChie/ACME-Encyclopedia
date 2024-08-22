@@ -1,5 +1,5 @@
 from api.v1.views import app_views
-from flask import jsonify, request
+from flask import jsonify, request, session
 from flask_login import (login_required , login_user,
                          logout_user, login_required,
                          current_user)
@@ -92,3 +92,25 @@ def edit_article(id=None):
         article.update_article(id, data)
         done = {"Status": "Success"}
         return jsonify(done), 201
+
+
+@app_views.route("/article/<id>/rank", methods=["PUT"],
+                 strict_slashes=False)
+@login_required
+def increase_rank(id=None):
+    """Increases the rank of an article when viewed"""
+    if not id:
+        not_found = {"Error": "Article not found"}
+        return jsonify(not_found), 404
+
+    if 'viewed_articles' not in session:
+        session['viewed_articles'] = []
+    if id not in session['viewed_articles']:
+        article = ArticleInfo.find_by_id(id)
+        if not article:
+            not_found = {"Error": "Article not found"}
+            return jsonify(not_found), 404
+
+        article.rank += 1
+        article.save()
+        session['viewed_articles'].append(id)

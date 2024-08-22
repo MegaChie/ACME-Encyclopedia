@@ -4,7 +4,7 @@ from datetime import datetime
 
 from mongoengine import (Document, StringField,
                          BooleanField, ListField,
-                         DateTimeField)
+                         DateTimeField, IntField)
 from flask_bcrypt import Bcrypt
 from bson import ObjectId
 from flask_login import UserMixin
@@ -93,6 +93,7 @@ class ArticleInfo(Document):
                          default="published")
     language = StringField(choices=["eng", "esp"], required=True,
                            default="eng")
+    rank = IntField(default=0)
     created_at = DateTimeField(default=datetime.utcnow)
     updated_at = DateTimeField(default=datetime.utcnow)
     meta = {"collection": "Articles"}
