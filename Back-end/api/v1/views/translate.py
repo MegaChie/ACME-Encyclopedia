@@ -6,10 +6,11 @@ from flask_login import login_required
 import json
 import requests as req
 from os import getenv
+from api.v1.views import app_views
 from database import ArticleInfo
 
 
-def translate_article(translate_this => list, next => str,
+def translate_article(translate_this: list, next: str,
                       prev: str):
     """
     Sends the article to the translation server
@@ -20,15 +21,19 @@ def translate_article(translate_this => list, next => str,
     - next: The language to translate to.
     - prev: The language to translate from.
     """
-    fro
+    print(translate_this)
     text = {"q": translate_this,
             "source": prev,
             "target": next}
     base = getenv("translate_API") # Add this to environment variables
+    base = "http://18.210.10.89:5000/translate"
     head = {"Content-Type": "application/json"}
     with req.post(base, headers=head,
                   data=json.dumps(text)) as marko:
-        return marko.json().get("translatedText")
+        if marko.status_code == 200:
+            print(marko.json().get("translatedText"))
+            return marko.json().get("translatedText")
+        print(marko.content)
 
 
 @app_views.route("/translate/<id>/<lan>", methods=["POST"])
@@ -52,7 +57,7 @@ def translate(id=None, lan=None):
     translatable = translatable + tag_list
     translated = translate_article(translate_this=translatable,
                                     next=lan,
-                                    prev=article_data.get("language"))
+                                    prev=article_data.get("Language"))
 
     new_article = ArticleInfo(title=translated[0], content=translated[1],
                               tags=translated[2:], language=lan,

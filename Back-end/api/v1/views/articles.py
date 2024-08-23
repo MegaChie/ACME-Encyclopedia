@@ -12,8 +12,7 @@ def add_article():
     """add article to the database."""
     if request.is_json:
         data = request.get_json()
-        if (not data.get("title") or not data.get("content")
-           or not data.get("language")):
+        if (not data.get("title") or not data.get("content")):
             missing = {"Error": "Plese add a tile, content and language"}
             return jsonify(missing), 400
 
@@ -47,7 +46,7 @@ def get_article(id):
 @login_required
 def list_articles():
     """list all articles from the database"""
-    articles = ArticleInfo.objects.all()
+    articles = ArticleInfo.objects.all().order_by("rank")
     articles_list = [article.to_json() for article in articles
                      if article.status == "published"]
     return jsonify({"articles": articles_list}), 200
@@ -94,7 +93,7 @@ def edit_article(id=None):
         return jsonify(done), 201
 
 
-@app_views.route("/article/<id>/rank", methods=["PUT"],
+@app_views.route("/article/<id>/rank", methods=["GET"],
                  strict_slashes=False)
 @login_required
 def increase_rank(id=None):
@@ -114,3 +113,5 @@ def increase_rank(id=None):
         article.rank += 1
         article.save()
         session['viewed_articles'].append(id)
+        rank_up = {"Status": "Article  ranked up by one"}
+        return jsonify(rank_up), 201

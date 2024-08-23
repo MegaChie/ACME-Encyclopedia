@@ -91,8 +91,8 @@ class ArticleInfo(Document):
     author = StringField(required=False)
     status = StringField(choices=["draft", "published"], required=False,
                          default="published")
-    language = StringField(choices=["eng", "esp"], required=True,
-                           default="eng")
+    language = StringField(choices=["en", "es"], required=False,
+                           default="en")
     rank = IntField(default=0)
     created_at = DateTimeField(default=datetime.utcnow)
     updated_at = DateTimeField(default=datetime.utcnow)
@@ -135,14 +135,15 @@ class ArticleInfo(Document):
         """Returns the JSON version of the article data"""
         return {
             "Title": self.title,
-            "Tontent": self.content,
+            "Content": self.content,
             "Tags": self.tags,
             "Created at": self.created_at.isoformat(),
             "Updated_at": self.updated_at.isoformat(),
             "Author": self.author,
             "db ID": str(self.id),
             "Status": self.status,
-            "Language": self.language
+            "Language": self.language,
+            "Rank": self.rank
         }
 
     @classmethod
