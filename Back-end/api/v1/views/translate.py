@@ -5,7 +5,6 @@ from flask import jsonify, url_for, redirect
 from flask_login import login_required
 import json
 import requests as req
-from os import getenv
 from api.v1.views import app_views
 from database import ArticleInfo
 
@@ -21,14 +20,15 @@ def translate_article(translate_this: list, next: str,
     - next: The language to translate to.
     - prev: The language to translate from.
     """
-    print(translate_this)
+    from api.v1.app.app import translate_API
+
+
+    # print(translate_this)
     text = {"q": translate_this,
             "source": prev,
             "target": next}
-    base = getenv("translate_API") # Add this to environment variables
-    base = "http://18.210.10.89:5000/translate"
     head = {"Content-Type": "application/json"}
-    with req.post(base, headers=head,
+    with req.post(translate_API, headers=head,
                   data=json.dumps(text)) as marko:
         if marko.status_code == 200:
             print(marko.json().get("translatedText"))

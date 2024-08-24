@@ -52,6 +52,8 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_USE_SIGNER"] = True
 Session(app)
 
+translate_API = getenv("translate_API")
+
 
 @app.errorhandler(404)
 def not_found(_):
