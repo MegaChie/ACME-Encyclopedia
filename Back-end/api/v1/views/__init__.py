@@ -9,4 +9,4 @@ from api.v1.views.index import *
 from api.v1.views.users import *
 from api.v1.views.login import *
 from api.v1.views.articles import *
-
+from api.v1.views.translate import *
