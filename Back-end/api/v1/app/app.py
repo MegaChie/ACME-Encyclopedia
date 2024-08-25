@@ -26,7 +26,7 @@ cors = CORS(app, resources={r"/api/*": {"origins": "*"}},
 db = MongoEngine()
 app.config["MONGODB_SETTINGS"] = {
     "db": "ency_db",
-    "host": getenv("ip") or "localhost",
+    "host": getenv("database_ip") or "localhost",
     "port": 27017,
 }
 
@@ -44,7 +44,8 @@ app.config["SESSION_COOKIE_SECURE"] = False
 app.config["SESSION_COOKIE_PATH"] = "/api/"
 app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(hours=8)
 app.config["SESSION_TYPE"] = "mongodb"
-app.config["SESSION_MONGODB"] = MongoClient(getenv("ip") or "localhost",
+app.config["SESSION_MONGODB"] = MongoClient((getenv("database_ip") or
+                                             "localhost"),
                                             27017)
 app.config["SESSION_MONGODB_DB"] = "flask_session"
 app.config["SESSION_MONGODB_COLLECT"] = "sessions"
@@ -52,7 +53,7 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_USE_SIGNER"] = True
 Session(app)
 
-translate_API = getenv("translate_API")
+translate_API = getenv("translate_API") or "http://localhost:5000/translate"
 
 
 @app.errorhandler(404)
