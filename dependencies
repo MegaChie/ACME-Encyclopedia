@@ -1,6 +1,37 @@
 #!/usr/bin/env bash
 # Installs all dependencies for the project
 
+# Installs Docker
+echo 'Installing Docker...'
+sleep 4
+sudo snap install docker
+sudo apt update
+sudo apt install docker.io
+sudo systemctl start docker
+sudo systemctl enable docker
+
+# LibreTranslate Docker Image
+echo 'Installing LibreTranslate...'
+sleep 4
+docker pull libretranslate/libretranslate
+echo 'Running LibreTranslate...'
+sleep 2
+docker run -d -p 5000:5000 libretranslate/libretranslate
+
+
+# Installs MongoDB version 6
+echo 'Installing MongoDB'
+sleep 4
+curl -fsSL https://pgp.mongodb.com/server-6.0.asc | sudo tee /etc/apt/trusted.gpg.d/mongodb-server-6.0.asc > /dev/null
+echo 'deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/6.0 multiverse' | sudo tee /etc/apt/sources.list.d/mongodb-org-6.0.list
+sudo apt update
+sudo apt install -y mongodb-org
+sudo systemctl start mongod
+sudo systemctl enable mongod
+
+# Installs Python libraries
+echo 'Installing Python libraries...'
+sleep 4
 pip install flask
 pip install Flask-Cors
 pip install git+https://github.com/idoshr/flask-mongoengine.git@1.0.1
@@ -12,3 +43,11 @@ pip install mongoengine
 pip install flask_oauthlib
 pip install Werkzeug==2.2.2
 pip install authlib
+
+# Installs Node
+echo 'Installing Node...'
+sleep 4
+sudo apt update
+sudo apt install nodejs npm
+
+echo 'All done, Boss!'
