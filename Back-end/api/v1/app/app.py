@@ -7,11 +7,17 @@ from flask_login import LoginManager
 from flask_mongoengine import MongoEngine
 from pymongo import MongoClient
 from flask_cors import CORS
+import logging
 from os import getenv
 import secrets
 from datetime import timedelta
 from database import UserInfo
 from api.v1.app import oauth
+
+# Run log
+logging.basicConfig(filename='../../Flask/ACME-ency/error.log',
+                    level=logging.INFO)
+
 app = Flask(__name__)
 app.secret_key = "your_secret_key"
 oauth.init_app(app)
@@ -54,7 +60,10 @@ app.config["SESSION_USE_SIGNER"] = True
 Session(app)
 
 translate_API = getenv("translate_API") or "http://localhost:5000/translate"
+<<<<<<< HEAD
+=======
 
+>>>>>>> 7d975e78a2a71bbe5e875e8e5c38404acdb6c916
 
 @app.errorhandler(404)
 def not_found(_):

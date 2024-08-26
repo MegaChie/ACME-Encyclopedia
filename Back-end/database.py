@@ -91,12 +91,13 @@ class ArticleInfo(Document):
     author = StringField(required=False)
     status = StringField(choices=["draft", "published"], required=False,
                          default="published")
-    language = StringField(choices=["en", "es"], required=False,
-                           default="en")
+    language = StringField(required=False, default="en")
     rank = IntField(default=0)
     created_at = DateTimeField(default=datetime.utcnow)
     updated_at = DateTimeField(default=datetime.utcnow)
-    meta = {"collection": "Articles"}
+    meta = {"collection": "Articles",
+            "indexes": ["rank"]
+            }
 
     def add_to_coll(self):
         """Adds the document to the proper collection"""

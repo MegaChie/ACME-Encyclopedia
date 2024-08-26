@@ -46,7 +46,7 @@ def get_article(id):
 @login_required
 def list_articles():
     """list all articles from the database"""
-    articles = ArticleInfo.objects.all().order_by("rank")
+    articles = ArticleInfo.objects.all().order_by("-rank")
     articles_list = [article.to_json() for article in articles
                      if article.status == "published"]
     return jsonify({"articles": articles_list}), 200
@@ -93,7 +93,7 @@ def edit_article(id=None):
         return jsonify(done), 201
 
 
-@app_views.route("/article/<id>/rank", methods=["GET"],
+@app_views.route("/article/<id>/rank", methods=["PUT"],
                  strict_slashes=False)
 @login_required
 def increase_rank(id=None):
@@ -110,8 +110,7 @@ def increase_rank(id=None):
             not_found = {"Error": "Article not found"}
             return jsonify(not_found), 404
 
-        article.rank += 1
-        article.save()
+        article.update(inc__rank=1)
         session['viewed_articles'].append(id)
         rank_up = {"Status": "Article  ranked up by one"}
         return jsonify(rank_up), 201
