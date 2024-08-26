@@ -60,7 +60,7 @@ def search_articles():
     if query:
 
         # Perform a case-insensitive search for titles that contain the query string
-        articles = ArticleInfo.objects(title=query)
+        articles = ArticleInfo.objects(title__istartswith=query)
 
         if articles:
             article_list = [article.to_json() for article in articles
