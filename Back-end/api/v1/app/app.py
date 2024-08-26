@@ -13,7 +13,6 @@ import secrets
 from datetime import timedelta
 from database import UserInfo
 from authlib.integrations.flask_client import OAuth
-from api.v1.app import oauth
 
 
 # Initialize the OAuth object
