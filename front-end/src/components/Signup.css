@@ -1,0 +1,78 @@
+/* Container for the signup form */
+.signup-container {
+  background-color: #f9f9f9; /* Light gray background */
+  width: 400px;              /* Fixed width for the form */
+  margin: 50px auto;         /* Center the form horizontally and add space above */
+  padding: 30px;             /* Padding inside the container */
+  border-radius: 8px;        /* Rounded corners */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
+
+/* Style for the form heading */
+.signup-container h2 {
+  text-align: center;        /* Center the heading */
+  color: #333;               /* Dark gray text color */
+  font-weight: 600;          /* Slightly bold */
+  margin-bottom: 20px;       /* Space below the heading */
+}
+
+/* Style for the form labels */
+.signup-container label {
+  display: block;            /* Make label block-level to occupy full width */
+  margin-bottom: 8px;        /* Space below the label */
+  color: #555;               /* Medium gray text color */
+}
+
+/* Style for the input fields */
+.signup-container input {
+  width: 100%;               /* Make input fields take full width */
+  padding: 10px;             /* Padding inside the input field */
+  margin-bottom: 15px;       /* Space below each input field */
+  border: 1px solid #ccc;    /* Light gray border */
+  border-radius: 4px;        /* Slightly rounded corners */
+  box-sizing: border-box;    /* Ensure padding doesn't affect width */
+  font-size: 16px;           /* Slightly larger font for readability */
+}
+
+/* Style for the submit button */
+.signup-container button {
+  width: 100%;               /* Make the button take full width */
+  padding: 10px;             /* Padding inside the button */
+  background-color: #28a745; /* Green background */
+  color: white;              /* White text color */
+  border: none;              /* Remove default border */
+  border-radius: 4px;        /* Slightly rounded corners */
+  cursor: pointer;           /* Pointer cursor on hover */
+  font-size: 16px;           /* Slightly larger font for readability */
+  font-weight: 600;          /* Slightly bold text */
+}
+
+/* Button hover effect */
+.signup-container button:hover {
+  background-color: #218838; /* Darker green on hover */
+}
+.login-redirect
+{
+  margin-top : 20px;
+}
+
+.login-link
+{
+  color: gold;
+  text-decoration: none;
+  font-weight: bold;
+  cursor: pointer;
+
+}
+
+.login-link:hover {
+  text-decoration: underline;
+}
+
+/* Media query for smaller screens */
+@media (max-width: 500px) {
+  .signup-container {
+    width: 90%;             /* Make the form responsive */
+    margin: 20px auto;      /* Adjust margin for smaller screens */
+  }
+}

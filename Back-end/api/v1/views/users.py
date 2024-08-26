@@ -21,6 +21,7 @@ def add_user():
                             password=data.get("password"))
         new_user.hash_password()
         new_user.add_to_coll()
+
         return jsonify(new_user.to_json()), 201
 
     else:
