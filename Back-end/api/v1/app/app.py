@@ -29,7 +29,7 @@ github = oauth.register(
 )
 
 
-logging.basicConfig(filename='../../Flask/ACME-ency/error.log',
+logging.basicConfig(filename='error.log',
                     level=logging.INFO) 
 
 # Run log
