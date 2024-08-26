@@ -3,15 +3,17 @@
 from flask import Flask
 from flask import jsonify
 from flask_session import Session
-from flask_login import LoginManager, login_user, logout_user, login_required
+from flask_login import LoginManager
 from flask_mongoengine import MongoEngine
 from pymongo import MongoClient
 from flask_cors import CORS
+import logging
+from os import getenv
 import secrets
 from datetime import timedelta
 from database import UserInfo
 from authlib.integrations.flask_client import OAuth
-
+from api.v1.app import oauth
 
 
 # Initialize the OAuth object
@@ -28,6 +30,13 @@ github = oauth.register(
 )
 
 
+logging.basicConfig(filename='../../Flask/ACME-ency/error.log',
+                    level=logging.INFO) 
+
+# Run log
+
+
+
 app = Flask(__name__)
 oauth.init_app(app)
 
@@ -42,7 +51,7 @@ cors = CORS(app, resources={r"/api/*": {"origins": "*"}},
 db = MongoEngine()
 app.config["MONGODB_SETTINGS"] = {
     "db": "ency_db",
-    "host": "localhost",
+    "host": getenv("database_ip") or "localhost",
     "port": 27017,
 }
 
@@ -60,12 +69,16 @@ app.config["SESSION_COOKIE_SECURE"] = False
 app.config["SESSION_COOKIE_PATH"] = "/api/"
 app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(hours=8)
 app.config["SESSION_TYPE"] = "mongodb"
-app.config["SESSION_MONGODB"] = MongoClient("localhost", 27017)
+app.config["SESSION_MONGODB"] = MongoClient((getenv("database_ip") or
+                                             "localhost"),
+                                            27017)
 app.config["SESSION_MONGODB_DB"] = "flask_session"
 app.config["SESSION_MONGODB_COLLECT"] = "sessions"
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_USE_SIGNER"] = True
 Session(app)
+
+translate_API = getenv("translate_API") or "http://localhost:5000/translate"
 
 
 @app.errorhandler(404)
