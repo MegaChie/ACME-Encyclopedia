@@ -58,9 +58,10 @@ def search_articles():
     """Search for articles by title"""
     query = request.args.get("q")
     if query:
-        # Perform a case-insensitive search for
-        # the titles that contain the query string
-        articles = ArticleInfo.objects(title__icontains=query)
+
+        # Perform a case-insensitive search for titles that contain the query string
+        articles = ArticleInfo.objects(title=query)
+
         if articles:
             article_list = [article.to_json() for article in articles
                             if article.status == "published"]
