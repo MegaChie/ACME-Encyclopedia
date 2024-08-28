@@ -43,13 +43,19 @@ def translate(id=None, lan=None):
     if not id:
         no_article = {"Error": "Article not found"}
         return jsonify(no_article), 404
+    else:
+        print(f'{id}\n')
     if not lan:
         return redirect(url_for(articles.get_article(id)))
+    else:
+        print(f'{lan}\n')
 
     article = ArticleInfo.find_by_id(id)
     if not article:
         no_article = {"Error": "Article not found"}
         return jsonify(no_article), 404
+    else:
+        print(f'-----------Translatable Article found-----------\n {article.to_json()}')
 
     article_data = article.to_json()
     tag_list = article_data.get("Tags")

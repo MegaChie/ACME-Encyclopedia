@@ -13,8 +13,12 @@ github_redirect_uri = 'http://localhost:5000/api/v1/auth/github/callback'
 google_redirect_uri = 'http://localhost:5000/api/v1/auth/google/callback'
 
 
+
 @app_views.route('/login/github')
 def login_github():
+    '''
+    initiate log in oauth flow
+    '''
     from api.v1.app.app import github
     redirect_uri = url_for('app_views.login_github_callback', _external=True)
     return github.authorize_redirect(redirect_uri)
@@ -22,6 +26,11 @@ def login_github():
 
 @app_views.route('auth/github/callback')
 def login_github_callback():
+    '''
+    login callback
+
+    return: current_user.id
+    '''
     from api.v1.app.app import github
     token = github.authorize_access_token()
     user_info = github.get('user').json()
@@ -32,15 +41,18 @@ def login_github_callback():
     if existing_user:
         session['user_id'] = str(existing_user.id)
         return jsonify({'user_id': str(existing_user.id)}), 200
-    else:
-        return jsonify({'error': 'User is not authenticated or doesn\'t exist'}), 401
+   # else:
+    #    return jsonify({'error': 'User is not authenticated or doesn\'t exist'}), 401
 
     # if user doesn't exist create new one
     new_user = UserInfo(username=user_name, email=user_email)
     new_user.authed = True
     new_user.add_to_coll()
+    from flask_login import current_user
+    data = new_user.to_json()
+    login_user(new_user)
     session['user_id'] = str(new_user.id)
-    return jsonify({'user_id': str(new_user.id)}), 200
+    return jsonify({'current_user': current_user.id}), 200
 
 
 @app_views.route('/login/google')
@@ -114,7 +126,6 @@ def logout():
         logout_user()
         loged_out = {"Status": "Logged out! Please Sign in again"}
         return jsonify(loged_out), 201
-
 
     if not current_user.is_authenticated:
         print(current_user)

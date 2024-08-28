@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react'
 import axios from 'axios';
 import './Homepage.css';
+import {Link} from "react-router-dom";
 
 
 const Homepage = () => {
@@ -15,6 +16,7 @@ const Homepage = () => {
                 const response = await axios.get('/api/v1/articles',
                     {withCredentials: true});
                 setArticles(response.data.articles);
+                console.log(response.data.articles);
             } catch (e) {
                 console.error("Error fetching articles", e);
 
@@ -22,8 +24,8 @@ const Homepage = () => {
         };
         fetchArticles();
         }, []);
-    const filteredArticles = articles.filter((article) =>
-        article.title.toLowerCase().includes(searchQuery.toLowerCase()) > -1);
+   const filteredArticles = articles.filter((article) =>
+  article.Title && article.Title.toLowerCase().includes(searchQuery.toLowerCase()));
     const handleSearch = async (e) => {
     const query = e.target.value;
     setSearchQuery(query);
@@ -44,8 +46,8 @@ const Homepage = () => {
       setShowResults(false);
     }
   };
-  const handleResultClick = (title) => {
-      setSearchQuery(title);
+  const handleResultClick = (Title) => {
+      setSearchQuery(Title);
       setShowResults(false);
   };
 
@@ -66,17 +68,17 @@ const Homepage = () => {
             <div
               key={article._id}
               className="search-result-item"
-              onClick={() => handleResultClick(article.title)}
+              onClick={() => handleResultClick(article.Title)}
             >
-              {article.title}
+              {article.Title}
             </div>
           ))}
         </div>
       )}
             <ul className="article-list">
                 {filteredArticles.map(article => (
-                    <li key={article.id} className="article-item">
-                        <h3>{article.title}</h3>
+                    <li key={article['db ID']} className="article-item">
+                        <Link to={`/article/${article['db ID']}`}>{article.Title}</Link>
                         <p>{article.content}</p>
                     </li>
                 ))}

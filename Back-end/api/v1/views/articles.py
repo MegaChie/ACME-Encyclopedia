@@ -36,7 +36,7 @@ def add_article():
 def get_article(id):
     """fetch articles from the database."""
     article = ArticleInfo.find_by_id(id)
-    if article and current_user.username == article.author:
+    if article:
         return jsonify(article), 200
     else:
         return jsonify({"Error": "Article not found"}), 404

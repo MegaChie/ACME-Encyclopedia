@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Signup from './components/Signup';
 import Login from './components/Login';
 import Homepage from './components/Homepage';
+import ArticleDetail from './components/ArticleDetail'
 import PrivateRoute from "./components/PrivateRoute";
 import {AuthProvider} from "./components/AuthContext";
 
@@ -21,6 +22,7 @@ function App() {
         <Route path="/" element={<Signup />} />  {/* Standard routee */}
         <Route path="/login" element={<Login />} />
         <Route path="/home" element={<PrivateRoute><Homepage /> </PrivateRoute>} />
+        <Route path="/article/:id" element={<PrivateRoute> <ArticleDetail /></PrivateRoute>} />
 
     </Routes>
   </Router>
@@ -28,5 +30,7 @@ function App() {
     );
 
 }
+
+
 
 export default App;
