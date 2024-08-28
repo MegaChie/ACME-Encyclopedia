@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react'
 import axios from 'axios';
 import './Homepage.css';
+import {Link} from "react-router-dom";
 
 
 const Homepage = () => {
@@ -76,8 +77,8 @@ const Homepage = () => {
       )}
             <ul className="article-list">
                 {filteredArticles.map(article => (
-                    <li key={article.id} className="article-item">
-                        <h3>{article.Title}</h3>
+                    <li key={article['db ID']} className="article-item">
+                        <Link to={`/article/${article['db ID']}`}>{article.Title}</Link>
                         <p>{article.content}</p>
                     </li>
                 ))}
