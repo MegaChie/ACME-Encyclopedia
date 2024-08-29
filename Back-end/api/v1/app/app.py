@@ -10,6 +10,7 @@ from flask_cors import CORS
 import logging
 from os import getenv
 import secrets
+from urllib.parse import quote_plus
 from datetime import timedelta
 from database import UserInfo
 from authlib.integrations.flask_client import OAuth
@@ -48,9 +49,13 @@ app.register_blueprint(app_views)
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}},
             supports_credentials=True)
 db = MongoEngine()
+user = quote_plus(getenv("name"))
+password = quote_plus(getenv("password"))
+host = ("mongodb+srv://{}:{}@cluster0.dmcy0ry.mongodb.net/".format(user, password) +
+        "?retryWrites=true&w=majority&appName=Cluster0")
 app.config["MONGODB_SETTINGS"] = {
     "db": "ency_db",
-    "host": getenv("database_ip") or "localhost",
+    "host": host or "localhost",
     "port": 27017,
 }
 
@@ -68,8 +73,7 @@ app.config["SESSION_COOKIE_SECURE"] = False
 app.config["SESSION_COOKIE_PATH"] = "/api/"
 app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(hours=8)
 app.config["SESSION_TYPE"] = "mongodb"
-app.config["SESSION_MONGODB"] = MongoClient((getenv("database_ip") or
-                                             "localhost"),
+app.config["SESSION_MONGODB"] = MongoClient(host or "localhost",
                                             27017)
 app.config["SESSION_MONGODB_DB"] = "flask_session"
 app.config["SESSION_MONGODB_COLLECT"] = "sessions"
