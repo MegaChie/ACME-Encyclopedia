@@ -1,8 +1,6 @@
 from api.v1.views import app_views
 from flask import jsonify, request, session
-from flask_login import (login_required , login_user,
-                         logout_user, login_required,
-                         current_user)
+from flask_login import (login_required, current_user)
 from database import ArticleInfo
 
 
@@ -12,9 +10,9 @@ def add_article():
     """add article to the database."""
     if request.is_json:
         data = request.get_json()
-        if (not data.get("title") or not data.get("content")):
-            missing = {"Error": "Plese add a tile, content and language"}
-            return jsonify(missing), 400
+        if not data.get("title") or not data.get("content"):
+            data_missing = {"Error": "Plese add a tile, content and language"}
+            return jsonify(data_missing), 400
 
         new_article = ArticleInfo(title=data.get("title"),
                                   content=data.get("content"),
@@ -23,11 +21,10 @@ def add_article():
                                   author=current_user.username,
                                   language=data.get("language"))
 
-
         new_article.add_to_coll()
         return jsonify(new_article), 201
     else:
-        not_json = {"Error": "Request must be JSON"}
+        not_json = {"Error": "Request must be a JSON"}
         return jsonify(not_json), 400
 
 
@@ -83,8 +80,8 @@ def edit_article(id=None):
         return jsonify(not_found), 404
 
     if current_user.username != article.author:
-        wrong_user = {"Error": "You are not the author of this article"}
-        return jsonify(wrong_user), 403
+        not_author = {"Error": "You are not the author of this article"}
+        return jsonify(not_author), 401
 
     if request.is_json:
         data = request.get_json()
@@ -92,6 +89,9 @@ def edit_article(id=None):
         article.update_article(id, data)
         done = {"Status": "Success"}
         return jsonify(done), 201
+
+    not_json = {"Error": "Request must be a JSON"}
+    return jsonify(not_json), 400
 
 
 @app_views.route("/article/<id>/rank", methods=["PUT"],
@@ -115,3 +115,6 @@ def increase_rank(id=None):
         session['viewed_articles'].append(id)
         rank_up = {"Status": "Article  ranked up by one"}
         return jsonify(rank_up), 201
+
+    ranked = {"Status": "This article is already ranked by logged in user"}
+    return jsonify(ranked), 403

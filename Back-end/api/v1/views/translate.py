@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 """Contains the translation logic"""
-from datetime import timedelta
-from flask import jsonify, url_for, redirect
+from flask import jsonify
 from flask_login import login_required
 import json
 import requests as req
@@ -23,7 +22,6 @@ def translate_article(translate_this: list, next: str,
     from api.v1.app.app import translate_API
 
 
-    # print(translate_this)
     text = {"q": translate_this,
             "source": prev,
             "target": next}
@@ -45,18 +43,20 @@ def translate(id=None, lan=None):
         return jsonify(no_article), 404
     else:
         print(f'{id}\n')
-    if not lan:
-        return redirect(url_for(articles.get_article(id)))
-    else:
+    # if not lan:
+    #     return redirect(url_for(articles.get_article(id)))
+    # else:
         print(f'{lan}\n')
 
     article = ArticleInfo.find_by_id(id)
     if not article:
         no_article = {"Error": "Article not found"}
         return jsonify(no_article), 404
-    else:
-        print(f'-----------Translatable Article found-----------\n {article.to_json()}')
 
+    if article.source and article.language == lan:
+        language_found = {"Status": "Article translated to this language"}
+        return jsonify(language_found)
+        # Redirect to original
     article_data = article.to_json()
     tag_list = article_data.get("Tags")
     translatable = [article_data.get("Title"), article_data.get("Content")]
@@ -67,6 +67,7 @@ def translate(id=None, lan=None):
 
     new_article = ArticleInfo(title=translated[0], content=translated[1],
                               tags=translated[2:], language=lan,
-                              author=article_data.get("Author"))
+                              author=article_data.get("Author"),
+                              source=article_data.get("db ID"))
     new_article.add_to_coll()
     return jsonify(new_article.to_json()), 201

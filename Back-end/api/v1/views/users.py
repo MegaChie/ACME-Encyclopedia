@@ -70,7 +70,7 @@ def user_edit(id=None):
         return jsonify(edited), 200
     else:
         not_found = {"Error": "User not found"}
-        return jsonify(not_found), 400
+        return jsonify(not_found), 404
 
 
 @app_views.route("/delete_users/<id>", methods=["DELETE"],
@@ -86,7 +86,7 @@ def user_delete(id=None):
             return jsonify(deleted), 201
         else:
             not_found = {"Error": "User not found"}
-            return jsonify(not_found), 400
+            return jsonify(not_found), 404
     else:
         not_deleted = {"Status": "Failed", "Reason": "No ID passed"}
         return jsonify(not_deleted), 400
