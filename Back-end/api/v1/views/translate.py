@@ -34,6 +34,25 @@ def translate_article(translate_this: list, next: str,
         print(marko.content)
 
 
+def prev_lans(article_case: str, target_lan: str):
+    """
+    Check languages for any article
+
+    Args:
+    - article_case: The ID of article to find languages for.
+    - target_lan: The language we intend to find.
+    """
+    found_languages = []
+    article = ArticleInfo.find_by_id(article_case)
+    info = article.to_json()
+    if info.get("source"):
+        found_languages.append(info.get("language"))
+        if target_lan in found_languages:
+            return info.get("source")
+        check_translation_list(article_case=info.get("source"),
+                               target_lan=target_lan)
+
+
 @app_views.route("/translate/<id>/<lan>", methods=["POST"])
 @login_required
 def translate(id=None, lan=None):
@@ -54,11 +73,11 @@ def translate(id=None, lan=None):
         return jsonify(no_article), 404
 
     article_data = article.to_json()
-    if article_data.get("source") and article_data.get("language") == lan:
-        exists = {"Status": "Translated before",
-                  "Traslation ID": article_data.get("db ID")}
-        return jsonify(exists), 303
-        # Should redirect to article
+    found_translation = prev_lans(article_case=article_data.get("source"),
+                                  target_lan=lan)
+    if found_translation:
+        done_before = {"Status": "Article already translated",
+                       "Translation ID": found_translation}
     tag_list = article_data.get("Tags")
     translatable = [article_data.get("Title"), article_data.get("Content")]
     translatable = translatable + tag_list
