@@ -94,9 +94,9 @@ class ArticleInfo(Document):
     rank = IntField(default=0)
     created_at = DateTimeField(default=datetime.utcnow)
     updated_at = DateTimeField(default=datetime.utcnow)
-    source = ListField(required=False)
+    source = StringField(required=False)
     meta = {"collection": "Articles",
-            "indexes": ["rank"]
+            "indexes": ["rank", "title"]
             }
 
     def add_to_coll(self):

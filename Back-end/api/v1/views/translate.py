@@ -53,11 +53,12 @@ def translate(id=None, lan=None):
         no_article = {"Error": "Article not found"}
         return jsonify(no_article), 404
 
-    if article.source and article.language == lan:
-        language_found = {"Status": "Article translated to this language"}
-        return jsonify(language_found)
-        # Redirect to original
     article_data = article.to_json()
+    if article_data.get("source") and article_data.get("language") == lan:
+        exists = {"Status": "Translated before",
+                  "Traslation ID": article_data.get("db ID")}
+        return jsonify(exists), 303
+        # Should redirect to article
     tag_list = article_data.get("Tags")
     translatable = [article_data.get("Title"), article_data.get("Content")]
     translatable = translatable + tag_list

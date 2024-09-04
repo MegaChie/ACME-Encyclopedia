@@ -7,11 +7,11 @@ from database import ArticleInfo
 @app_views.route("/add_article", methods=["POST"])
 @login_required
 def add_article():
-    """add article to the database."""
+    """Adds article to the database."""
     if request.is_json:
         data = request.get_json()
         if not data.get("title") or not data.get("content"):
-            data_missing = {"Error": "Plese add a tile, content and language"}
+            data_missing = {"Error": "Plese add a tile, content"}
             return jsonify(data_missing), 400
 
         new_article = ArticleInfo(title=data.get("title"),
@@ -31,7 +31,7 @@ def add_article():
 @app_views.route("/articles/<id>", methods=["GET"], strict_slashes=False)
 @login_required
 def get_article(id):
-    """fetch articles from the database."""
+    """Fetchs articles from the database."""
     article = ArticleInfo.find_by_id(id)
     if article:
         return jsonify(article), 200
@@ -42,7 +42,7 @@ def get_article(id):
 @app_views.route("/articles", methods=["GET"], strict_slashes=False)
 @login_required
 def list_articles():
-    """list all articles from the database"""
+    """Lists all articles from the database"""
     articles = ArticleInfo.objects.all().order_by("-rank")
     articles_list = [article.to_json() for article in articles
                      if article.status == "published"]

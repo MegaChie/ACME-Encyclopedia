@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """Contains the status of the API"""
 from api.v1.views import app_views
-from flask import jsonify, request
+from flask import jsonify, request, redirect, url_for
 from database import UserInfo, ArticleInfo
 
 
@@ -21,17 +21,22 @@ def api_stats():
     return jsonify(stats), 200
 
 
-@app_views.route('/check_session', methods=['GET'])
+@app_views.route('/check_session', methods=['GET'], strict_slashes=False)
 def check_session():
+    """Returns session intel"""
     from flask_login import current_user
     if current_user.is_authenticated:
-        return jsonify({"Status": "Session is active", "User": current_user.username})
+        return jsonify({"Status": "Session is active",
+                        "User": current_user.username,
+                        "session": dict(session)})
     else:
         return jsonify({"Status": "No active session",
                         "cookie": request.cookies.get("Auth")})
 
 
-@app_views.route('/debug_session', methods=['GET'])
-def debug_session():
-    from flask import session
-    return jsonify({"session": dict(session)})
+@app_views.route('/documentation', methods=["GET"], strict_slashes=False)
+def docs():
+    """Redirects the documentation of the API"""
+    with open("../Documentation/Documentation_link.txt") as file:
+        url = file.readline()
+    return redirect(url, 308)

@@ -11,7 +11,7 @@ def add_user():
     """Adds a new user to the database"""
     if request.is_json:
         data = request.get_json()
-        if len(data.keys()) != 3:
+        if ():
             missing = {"Error": "Missing data"}
             return jsonify(missing), 400
 
