@@ -11,13 +11,14 @@ def add_user():
     """Adds a new user to the database"""
     if request.is_json:
         data = request.get_json()
-        if None in data.vlaues():
-            empty = []
-            for key, value in data.items():
-                if value == None:
-                    empty.append(key)
-            missing = {"Error": "Missing data, we require: ".format(empty)}
-            return jsonify(missing), 400
+        if len(data) != 3:
+            check_list = ["username", "email", "password"]
+            missing = []
+            for elem in check_list:
+                if elem not in data.keys():
+                    missing.append(elem)
+            empty_values = {"Error": "Missing {}".format(", ".join(missing))}
+            return jsonify(empty_values), 400
 
         name = UserInfo.find_by_name(data.get("username"))
         if name:
