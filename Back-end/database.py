@@ -81,6 +81,14 @@ class UserInfo(Document, UserMixin):
             "db ID": str(self.id)
         }
 
+    @classmethod
+    def find_by_name(cls, username):
+        """
+        Searches the database based on username and returns value if any
+        """
+        found = cls.objects(username=username).first()
+        return found
+
 
 class ArticleInfo(Document):
     """Represents an article in the database"""

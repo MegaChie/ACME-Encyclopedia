@@ -11,11 +11,23 @@ def add_user():
     """Adds a new user to the database"""
     if request.is_json:
         data = request.get_json()
-        if ():
-            missing = {"Error": "Missing data"}
+        if None in data.vlaues():
+            empty = []
+            for key, value in data.items():
+                if value == None:
+                    empty.append(key)
+            missing = {"Error": "Missing data, we require: ".format(empty)}
             return jsonify(missing), 400
 
-        # Check for duplicates first
+        name = UserInfo.find_by_name(data.get("username"))
+        if name:
+            used = {"Error": "this name is already used"}
+            return jsonify(used), 400
+        email = UserInfo.find_by_email(data.get("email"))
+        if email:
+            used = {"Error": "this email is already used"}
+            return jsonify(used), 400
+
         new_user = UserInfo(username=data.get("username"),
                             email=data.get("email"),
                             password=data.get("password"))
@@ -83,7 +95,7 @@ def user_delete(id=None):
         if user:
             user.delete_by_id(id)
             deleted = {"Status": "Deletion done"}
-            return jsonify(deleted), 201
+            return jsonify(deleted), 204
         else:
             not_found = {"Error": "User not found"}
             return jsonify(not_found), 404

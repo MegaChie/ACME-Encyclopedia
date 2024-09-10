@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+# Incomplete
 """Contains the translation logic"""
 from flask import jsonify
 from flask_login import login_required

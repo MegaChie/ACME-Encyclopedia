@@ -10,6 +10,13 @@ def add_article():
     """Adds article to the database."""
     if request.is_json:
         data = request.get_json()
+        if None in data.vlaues():
+            empty = []
+            for key, value in data.items():
+                if value == None:
+                    empty.append(key)
+            missing = {"Error": "Missing data, we require: ".format(empty)}
+            return jsonify(missing), 400
         if not data.get("title") or not data.get("content"):
             data_missing = {"Error": "Plese add a tile, content"}
             return jsonify(data_missing), 400
