@@ -4,7 +4,7 @@ import requests
 
 from api.v1.views import app_views
 from flask import jsonify, request, session, url_for
-from flask_login import login_user, logout_user, login_required, current_user
+from flask_login import login_user, logout_user, current_user
 from database import UserInfo
 from requests.auth import HTTPBasicAuth
 
@@ -91,7 +91,7 @@ def login():
             email = request.get_json().get("email")
             username = request.get_json().get("username")
             password = request.get_json().get("password")
-        except Exception:
+        except TypeError:
             missing = {"Error": "Missing data"}
             return jsonify(missing), 400
 
@@ -99,22 +99,7 @@ def login():
                                 username=username).first()
         if not user:
             no_user = {"Error": "User not found"}
-            return jsonify(no_user), 400
-
-        if user.is_password(password):
-            login_user(user)
-            from api.v1.app.app import app
-            app.logger.info(f"User {user.id} logged in, session ID: {session['_user_id']}")
-            if current_user.is_authenticated:
-                print("User is authenticated")
-            else:
-                print("User is not authenticated")
-
-            logged = {"Status": "Logged in!"}
-            # return redirect(url_for('dashboard'))
-            return jsonify(logged), 201
-        # Add login page
-        # return redirect(url_for('login.login'))
+            return jsonify(no_user), 404
 
     not_json = {"Error": "Not a JSON"}
     return jsonify(not_json), 400
@@ -133,4 +118,3 @@ def logout():
     logout_user()
     loged_out = {"Status": "Logged out! Please Sign in again"}
     return jsonify(loged_out), 201
-    # return redirect(url_for('login'))

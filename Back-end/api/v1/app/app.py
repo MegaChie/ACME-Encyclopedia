@@ -31,7 +31,7 @@ github = oauth.register(
 
 
 logging.basicConfig(filename='error.log',
-                    level=logging.INFO) 
+                    level=logging.INFO)
 
 # Run log
 
@@ -49,10 +49,14 @@ app.register_blueprint(app_views)
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}},
             supports_credentials=True)
 db = MongoEngine()
-user = quote_plus(getenv("name"))
-password = quote_plus(getenv("password"))
-host = ("mongodb+srv://{}:{}@cluster0.dmcy0ry.mongodb.net/".format(user, password) +
-        "?retryWrites=true&w=majority&appName=Cluster0")
+if getenv("name") and getenv("password"):
+    user = quote_plus(getenv("name"))
+    password = quote_plus(getenv("password"))
+    host = ("mongodb+srv://{}:{}@cluster0.dmcy0ry.mongodb.net/".format(user,
+                                                                       password) +
+            "?retryWrites=true&w=majority&appName=Cluster0")
+else:
+    host = None
 app.config["MONGODB_SETTINGS"] = {
     "db": "ency_db",
     "host": host or "localhost",

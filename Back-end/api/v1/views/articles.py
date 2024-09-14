@@ -1,21 +1,23 @@
 from api.v1.views import app_views
 from flask import jsonify, request, session
-from flask_login import (login_required , login_user,
-                         logout_user, login_required,
-                         current_user)
+from flask_login import (login_required, current_user)
 from database import ArticleInfo
 
 
 @app_views.route("/add_article", methods=["POST"])
 @login_required
 def add_article():
-    """add article to the database."""
+    """Adds article to the database."""
     if request.is_json:
         data = request.get_json()
-        if (not data.get("title") or not data.get("content")):
-            missing = {"Error": "Plese add a tile, content and language"}
-            return jsonify(missing), 400
-
+        if len(data) < 2:
+            check_list = ["content", "title"]
+            missing = []
+            for elem in check_list:
+                if elem not in data.keys():
+                    missing.append(elem)
+            empty_values = {"Error": "Missing {}".format(", ".join(missing))}
+            return jsonify(empty_values), 400
         new_article = ArticleInfo(title=data.get("title"),
                                   content=data.get("content"),
                                   tags=data.get("tags"),
@@ -23,18 +25,17 @@ def add_article():
                                   author=current_user.username,
                                   language=data.get("language"))
 
-
         new_article.add_to_coll()
         return jsonify(new_article), 201
     else:
-        not_json = {"Error": "Request must be JSON"}
+        not_json = {"Error": "Request must be a JSON"}
         return jsonify(not_json), 400
 
 
 @app_views.route("/articles/<id>", methods=["GET"], strict_slashes=False)
 @login_required
 def get_article(id):
-    """fetch articles from the database."""
+    """Fetchs articles from the database."""
     article = ArticleInfo.find_by_id(id)
     if article:
         return jsonify(article), 200
@@ -45,7 +46,7 @@ def get_article(id):
 @app_views.route("/articles", methods=["GET"], strict_slashes=False)
 @login_required
 def list_articles():
-    """list all articles from the database"""
+    """Lists all articles from the database"""
     articles = ArticleInfo.objects.all().order_by("-rank")
     articles_list = [article.to_json() for article in articles
                      if article.status == "published"]
@@ -83,8 +84,8 @@ def edit_article(id=None):
         return jsonify(not_found), 404
 
     if current_user.username != article.author:
-        wrong_user = {"Error": "You are not the author of this article"}
-        return jsonify(wrong_user), 403
+        not_author = {"Error": "You are not the author of this article"}
+        return jsonify(not_author), 401
 
     if request.is_json:
         data = request.get_json()
@@ -92,6 +93,9 @@ def edit_article(id=None):
         article.update_article(id, data)
         done = {"Status": "Success"}
         return jsonify(done), 201
+
+    not_json = {"Error": "Request must be a JSON"}
+    return jsonify(not_json), 400
 
 
 @app_views.route("/article/<id>/rank", methods=["PUT"],
@@ -115,3 +119,6 @@ def increase_rank(id=None):
         session['viewed_articles'].append(id)
         rank_up = {"Status": "Article  ranked up by one"}
         return jsonify(rank_up), 201
+
+    ranked = {"Status": "This article is already ranked by logged in user"}
+    return jsonify(ranked), 403
