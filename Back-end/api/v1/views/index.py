@@ -21,22 +21,9 @@ def api_stats():
     return jsonify(stats), 200
 
 
-@app_views.route('/check_session', methods=['GET'], strict_slashes=False)
-def check_session():
-    """Returns session intel"""
-    from flask_login import current_user
-    if current_user.is_authenticated:
-        return jsonify({"Status": "Session is active",
-                        "User": current_user.username,
-                        "session": dict(session)})
-    else:
-        return jsonify({"Status": "No active session",
-                        "cookie": request.cookies.get("Auth")})
-
-
 @app_views.route('/documentation', methods=["GET"], strict_slashes=False)
 def docs():
     """Redirects the documentation of the API"""
-    with open("../Documentation/Documentation_link.txt") as file:
-        url = file.readline()
+    url = ("https://night-belly-22c.notion.site/"
+           + "API-Docs-a3ab83c49bee49f5aaa08f4b512f1b08?pvs=4")
     return redirect(url, 308)

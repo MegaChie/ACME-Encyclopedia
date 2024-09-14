@@ -101,16 +101,6 @@ def login():
             no_user = {"Error": "User not found"}
             return jsonify(no_user), 404
 
-        if user.is_password(password):
-            login_user(user)
-            if current_user.is_authenticated:
-                print("User is authenticated")
-            else:
-                print("User is not authenticated")
-
-            logged = {"Status": "Logged in!"}
-            return jsonify(logged), 201
-
     not_json = {"Error": "Not a JSON"}
     return jsonify(not_json), 400
 
