@@ -1,4 +1,4 @@
-import './NotFound.css';
+import './css/NotFound.css';
 
 function NotFound() {
   return (
@@ -8,4 +8,4 @@ function NotFound() {
   );
 }
 
-export default NotFound
+export default NotFound;

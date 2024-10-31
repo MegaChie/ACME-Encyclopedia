@@ -1,4 +1,4 @@
-import './Home.css'
+import './css/Home.css'
 
 const stats = async () => {
   fetch('http://localhost:5000/api/v1/stats').then((res) => {

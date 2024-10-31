@@ -1,0 +1,11 @@
+.layout p {
+    background-color: red;
+    text-align: center
+}
+
+.layout {
+    height: 100vh;
+    background-color: yellow;
+    padding: 16px;
+    align-content: center
+}

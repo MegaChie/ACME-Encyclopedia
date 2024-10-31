@@ -4,7 +4,7 @@
   justify-content: space-between;
   align-items: center;
   height: 100vh;
-  padding: 20px;
+  padding: 8px;
 }
 
 footer {
@@ -24,7 +24,7 @@ footer {
 
 .signUp, .logIn {
   width: 128px;
-  background-color: rgba(2, 72, 96, 0.8);
+  background-color: #2889ad;
   border: 1px solid blue;
   padding: 10px;
   margin: 10px;
