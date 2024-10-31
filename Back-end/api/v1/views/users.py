@@ -11,11 +11,24 @@ def add_user():
     """Adds a new user to the database"""
     if request.is_json:
         data = request.get_json()
-        if len(data.keys()) != 3:
-            missing = {"Error": "Missing data"}
-            return jsonify(missing), 400
+        if len(data) != 3:
+            check_list = ["username", "email", "password"]
+            missing = []
+            for elem in check_list:
+                if elem not in data.keys():
+                    missing.append(elem)
+            empty_values = {"Error": "Missing {}".format(", ".join(missing))}
+            return jsonify(empty_values), 400
 
-        # Check for duplicates first
+        name = UserInfo.find_by_name(data.get("username"))
+        if name:
+            used = {"Error": "this name is already used"}
+            return jsonify(used), 400
+        email = UserInfo.find_by_email(data.get("email"))
+        if email:
+            used = {"Error": "this email is already used"}
+            return jsonify(used), 400
+
         new_user = UserInfo(username=data.get("username"),
                             email=data.get("email"),
                             password=data.get("password"))
@@ -70,7 +83,7 @@ def user_edit(id=None):
         return jsonify(edited), 200
     else:
         not_found = {"Error": "User not found"}
-        return jsonify(not_found), 400
+        return jsonify(not_found), 404
 
 
 @app_views.route("/delete_users/<id>", methods=["DELETE"],
@@ -83,10 +96,10 @@ def user_delete(id=None):
         if user:
             user.delete_by_id(id)
             deleted = {"Status": "Deletion done"}
-            return jsonify(deleted), 201
+            return jsonify(deleted), 204
         else:
             not_found = {"Error": "User not found"}
-            return jsonify(not_found), 400
+            return jsonify(not_found), 404
     else:
         not_deleted = {"Status": "Failed", "Reason": "No ID passed"}
         return jsonify(not_deleted), 400

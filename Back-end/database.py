@@ -1,10 +1,9 @@
 #!/usr/bin/python3
 """Contains the MongoDB database class"""
 from datetime import datetime
-
 from mongoengine import (Document, StringField,
-                         BooleanField, ListField,
-                         DateTimeField, IntField)
+                         DateTimeField, ListField,
+                         IntField)
 from flask_bcrypt import Bcrypt
 from bson import ObjectId
 from flask_login import UserMixin
@@ -17,7 +16,7 @@ class UserInfo(Document, UserMixin):
     username = StringField(required=True, unique=True)
     email = StringField(required=True, unique=True)
     password = StringField(required=False, unique=True)
-    authed = BooleanField(default=False)
+    # authed = BooleanField(default=False)
     meta = {"collection": "Users"}
 
     def add_to_coll(self):
@@ -82,6 +81,14 @@ class UserInfo(Document, UserMixin):
             "db ID": str(self.id)
         }
 
+    @classmethod
+    def find_by_name(cls, username):
+        """
+        Searches the database based on username and returns value if any
+        """
+        found = cls.objects(username=username).first()
+        return found
+
 
 class ArticleInfo(Document):
     """Represents an article in the database"""
@@ -95,8 +102,9 @@ class ArticleInfo(Document):
     rank = IntField(default=0)
     created_at = DateTimeField(default=datetime.utcnow)
     updated_at = DateTimeField(default=datetime.utcnow)
+    source = StringField(required=False)
     meta = {"collection": "Articles",
-            "indexes": ["rank"]
+            "indexes": ["rank", "title"]
             }
 
     def add_to_coll(self):
