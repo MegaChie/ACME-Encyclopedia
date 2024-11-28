@@ -1,15 +1,21 @@
-import './css/Home.css'
+import './css/Home.css';
+import React, { useState, useEffect } from "react";
 
-const stats = async () => {
-  fetch('http://localhost:5000/api/v1/stats').then((res) => {
-    return res.json();
-  }).then((data) => {
-    console.log(`So far, {data.users} are on board, with an article count`+
-                `reaching up to {data.articles} articles so far`);
-  });
+const fetchStats = async () => {
+  const res = await fetch("http://localhost:5000/api/v1/stats");
+  const data = await res.json();
+  return `So far, ${data.Users} are on board, with an article count` +
+         ` reaching up to ${data.Articles} articles so far`;
 };
 
 function Home() {
+  const [intel, setIntel] = useState("Grabing stats...");
+  useEffect(() => {
+    fetchStats().then((stats) => {
+      setIntel(stats);
+    });
+  }, []);
+
   return (
     <div className="Home">
       <div className="account">
@@ -20,7 +26,7 @@ function Home() {
             Log In
           </div>
       </div>
-      <p>{stats}</p>
+      <p>{intel}</p>
       <footer>ACME Corp</footer>
     </div>
   );

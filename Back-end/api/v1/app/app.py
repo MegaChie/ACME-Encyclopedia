@@ -30,7 +30,7 @@ github = oauth.register(
 )
 
 
-logging.basicConfig(filename='error.log',
+logging.basicConfig(filename='run_logs.log',
                     level=logging.INFO)
 
 # Run log
@@ -49,12 +49,14 @@ app.register_blueprint(app_views)
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}},
             supports_credentials=True)
 db = MongoEngine()
+
+# Check if using internet or local data base.
+# Make sure to save "name" and "password" invironment variables.
 if getenv("name") and getenv("password"):
     user = quote_plus(getenv("name"))
     password = quote_plus(getenv("password"))
-    host = ("mongodb+srv://{}:{}@cluster0.dmcy0ry.mongodb.net/".format(user,
-                                                                       password) +
-            "?retryWrites=true&w=majority&appName=Cluster0")
+    host = ("mongodb+srv://{}:{}@cluster0.dmcy0ry".format(user,password) +
+            ".mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
 else:
     host = None
 app.config["MONGODB_SETTINGS"] = {
