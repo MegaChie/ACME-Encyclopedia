@@ -2,7 +2,7 @@ import './css/Home.css';
 import React, { useState, useEffect } from "react";
 
 const fetchStats = async () => {
-  const res = await fetch("http://localhost:5000/api/v1/stats");
+  const res = await fetch("https://solid-waddle-6qxr79xwxr5frx79-5000.app.github.dev/api/v1/stats");
   const data = await res.json();
   return `So far, ${data.Users} are on board, with an article count` +
          ` reaching up to ${data.Articles} articles so far`;
