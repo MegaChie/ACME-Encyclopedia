@@ -37,6 +37,6 @@
         ]
     },
     "apiConfig": {
-        "baseURL": "https://thankfully-improved-dog.ngrok-free.app/api/v1/"
+        "baseURL": "http://34.201.68.85:5000/api/v1/"
     }
 }
