@@ -35,5 +35,8 @@
             "last 1 firefox version",
             "last 1 safari version"
         ]
+    },
+    "apiConfig": {
+        "baseURL": "https://thankfully-improved-dog.ngrok-free.app/api/v1/"
     }
 }
