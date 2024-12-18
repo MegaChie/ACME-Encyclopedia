@@ -11,7 +11,7 @@ function Signup() {
     const data = Object.fromEntries(formData.entries());
 
     try {
-      const response = await fetch("http://34.201.68.85:5000/api/v1/add_users", {
+      const response = await fetch("api/v1/add_users", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -35,13 +35,13 @@ function Signup() {
     setTimeout(() => {
       setPopupMessage("");
       setPopupClass("");
-    }, 3000); // Hides the popup after 3 seconds
+    }, 4000); // Hides the popup after 4 seconds
   };
 
   return (
     <div>
       <form onSubmit={handleSignup}>
-        <input type="text" name="username" placeholder="Username" required />
+        <input type="text" name="username" placeholder="Username" />
         <input type="email" name="email" placeholder="Email" required />
         <input type="password" name="password" placeholder="Password" required />
         <button type="submit">Sign Up</button>

@@ -32,3 +32,8 @@ footer {
   text-align: center;
   cursor: pointer;
 }
+
+.stats p {
+    font-size: 22px;
+    color: #6dc257
+}

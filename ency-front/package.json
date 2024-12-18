@@ -31,12 +31,9 @@
             "not op_mini all"
         ],
         "development": [
-            "last 1 chrome version",
             "last 1 firefox version",
             "last 1 safari version"
         ]
     },
-    "apiConfig": {
-        "baseURL": "http://34.201.68.85:5000/api/v1/"
-    }
+    "proxy": "http://localhost:5000"
 }

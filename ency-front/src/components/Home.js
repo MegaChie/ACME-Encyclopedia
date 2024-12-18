@@ -1,18 +1,14 @@
 import './css/Home.css';
-import React, { useState, useEffect } from "react";
-const packageJson = require('../../package.json');
+import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+// const packageJson = require('../../package.json');
 
-const IP = packageJson.apiConfig.baseURL;
+// const IP = packageJson.apiConfig.baseURL;
 const fetchStats = async () => {
-  const res = await fetch(`${IP}/stat`, {
-      method: "get",
-      headers: new Headers({
-        "User-Agent": "69420",
-      }),
-    })
+  const res = await fetch("api/v1/stats")
   const data = await res.json();
-  return `So far, ${data.Users} are on board, with an article count` +
-         ` reaching up to ${data.Articles} articles so far`;
+  return `So far, ${data.Users} person are on board, with an article count` +
+         ` reaching up to ${data.Articles} articles`;
 };
 
 function Home() {
@@ -27,13 +23,18 @@ function Home() {
     <div className="Home">
       <div className="account">
           <div className="signUp">
-            Sign Up
+            <Link to={"/Signup"}>
+              Sign Up
+            </Link>
           </div>
           <div className="logIn">
             Log In
           </div>
       </div>
-      <p>{intel}</p>
+      <div className='stats'>
+        <p>{intel}</p>
+      </div>
+      
       <footer>ACME Corp</footer>
     </div>
   );
