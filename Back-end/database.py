@@ -41,7 +41,7 @@ class UserInfo(Document, UserMixin):
         found = cls.objects(email=email).first()
         return found
 
-    def user_modfy(self, id, **kwargs):
+    def user_moidfy(self, id, **kwargs):
         """Update the information of a user"""
         user = self.find_by_id(id)
         for key, value in kwargs.items():

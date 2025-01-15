@@ -7,7 +7,7 @@ import { Link } from "react-router-dom";
 const fetchStats = async () => {
   const res = await fetch("api/v1/stats")
   const data = await res.json();
-  return `So far, ${data.Users} person are on board, with an article count` +
+  return `So far, ${data.Users} persons are on board, with an article count` +
          ` reaching up to ${data.Articles} articles`;
 };
 
@@ -28,7 +28,9 @@ function Home() {
             </Link>
           </div>
           <div className="logIn">
-            Log In
+          <Link to={"/Login"}>
+              Log In
+            </Link>
           </div>
       </div>
       <div className='stats'>

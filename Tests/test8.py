@@ -3,7 +3,7 @@ import json
 
 
 head = {"Content-Type": "application/json"}
-base = "http://54.157.134.146:5000/api/v1/login"
+base = "http://localhost:5000/api/v1/login"
 data = {"email": "fake2", "password":"fake2",
         "username": "fake2"}
 with req.post(base, headers=head,

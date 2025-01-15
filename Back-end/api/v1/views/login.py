@@ -85,13 +85,12 @@ def login_google_oauth_callback():
 
 @app_views.route("/login", methods=["POST"], strict_slashes=False)
 def login():
-    """Login a user while directing new one to signup"""
     if request.is_json:
         try:
             email = request.get_json().get("email")
             username = request.get_json().get("username")
             password = request.get_json().get("password")
-        except TypeError:
+        except Exception:
             missing = {"Error": "Missing data"}
             return jsonify(missing), 400
 
@@ -99,10 +98,15 @@ def login():
                                 username=username).first()
         if not user:
             no_user = {"Error": "User not found"}
-            return jsonify(no_user), 404
+            return jsonify(no_user), 400
 
-    not_json = {"Error": "Not a JSON"}
-    return jsonify(not_json), 400
+        if user.is_password(password):
+            login_user(user)
+            logged = {"Status": "Loged in!"}
+            # return redirect(url_for('dashboard'))
+            return jsonify(logged), 201
+        # Add login page
+        # return redirect(url_for('login.login'))
 
 
 @app_views.route("/logout", methods=["GET"])
