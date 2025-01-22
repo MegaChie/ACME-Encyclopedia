@@ -3,7 +3,7 @@
 from flask import Flask
 from flask import jsonify
 from flask_session import Session
-from flask_login import LoginManager
+from flask_login import LoginManager, current_user
 from flask_mongoengine import MongoEngine
 from pymongo import MongoClient
 from flask_cors import CORS
@@ -30,11 +30,9 @@ github = oauth.register(
 )
 
 
+# Run log file
 logging.basicConfig(filename='run_logs.log',
                     level=logging.INFO)
-
-# Run log
-
 
 
 app = Flask(__name__)
@@ -75,7 +73,7 @@ login_manager.login_view = "app_views.login"  # The login page
 app.config["SECRET_KEY"] = secrets.token_hex(16)
 app.config["SESSION_COOKIE_NAME"] = "Auth"
 app.config["SESSION_COOKIE_HTTPONLY"] = True
-app.config["SESSION_COOKIE_SECURE"] = False
+app.config["SESSION_COOKIE_SECURE"] = True
 app.config["SESSION_COOKIE_PATH"] = "/api/"
 app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(hours=8)
 app.config["SESSION_TYPE"] = "mongodb"
@@ -87,7 +85,7 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_USE_SIGNER"] = True
 Session(app)
 
-translate_API = getenv("translate_API") or "http://localhost:5000/translate"
+# translate_API = getenv("translate_API") or "http://localhost:5000/translate"
 
 
 @app.errorhandler(404)
@@ -99,7 +97,7 @@ def not_found(_):
 
 @login_manager.user_loader
 def load_user(user_id):
-    """loads a user """
+    """loads a user"""
     return UserInfo.find_by_id(user_id)
 
 #for rule in app.url_map.iter_rules():
