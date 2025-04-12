@@ -1,30 +1,69 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import useDetectUser from "./Hooks/useDetectUser";
+import "./css/Articles.css";
 
-const fetchAuthed = async () => {
-  const res = await fetch("api/v1/auth_check");
-  const logs = await res.json();
-  return logs;
+// Graps the articles from the database
+const fetchArticles = async () => {
+  try {
+    const res = await fetch("api/v1/articles");
+    const data = await res.json();
+    return data;
+  } catch (err) {
+    console.error(err);
+  }
 }
 
-function Articles() {
-  const [isAuthed, setIsAuthed] = useState("Nope...");
-  const [userName, setUserName] = useState(null);
+const Articles = async () => {
+  // Checks if a user logged in
+  const fetchAuthed = useDetectUser();
 
+  const [isAuthed, setIsAuthed] = useState(false);
+  // const [userName, setUserName] = useState(null);
+  const [articlesList, setArticlesList] = useState([]);
+
+  // Uses the value from the user checking
   useEffect(() => {
-    fetchAuthed().then((condition) => {
-      setIsAuthed(condition.is_logged);
-    });
+    try {
+      setIsAuthed(fetchAuthed.is_logged);
+    } catch (err) {
+      console.error(err);
+    }
   }, []);
 
+  // Gets the user name
+  // useEffect(() => {
+  //   try {
+  //     fetchAuthed().then((name) => {
+  //       setUserName(name.user);
+  //     });
+  //   } catch (err) {
+  //     console.error(err);
+  //   }
+  // }, []);
+
+  // Prepares the article list to be used
   useEffect(() => {
-    fetchAuthed().then((name) => {
-      setUserName(name.user);
-    });
+    try {
+      fetchArticles().then((listOfArticles) => {
+        setArticlesList(listOfArticles.articles);
+      });
+    } catch (err) {
+      console.error(err);
+    }
   }, []);
+
+  const articleList = articlesList.map((article) => (
+    <li key={article["db ID"]}>{article.Title}</li>
+  ))
+
   return (
-    <div className="userCheck">
+    <div className="articleLayout">
       {
-        isAuthed ? (<p>name is {userName}</p>) : (<p>please signup or login</p>)
+        isAuthed ? (
+          <ul>{articleList}</ul>
+        ) : (
+          <p>signup or login popup</p>
+        )
       }
     </div>
   );

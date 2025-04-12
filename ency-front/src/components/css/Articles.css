@@ -1,0 +1,11 @@
+.articleLayout p {
+    font-size: 16pt;
+    font-style: italic;
+    margin: 8pt;
+    color: brown
+}
+
+.articleLayout ul {
+    color: darkcyan;
+    font-size: 16pt;
+}
